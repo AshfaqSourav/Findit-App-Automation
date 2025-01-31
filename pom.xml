@@ -1,0 +1,127 @@
+<!--<project xmlns="http://maven.apache.org/POM/4.0.0"-->
+<!--         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
+<!--         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">-->
+
+<!--  <modelVersion>4.0.0</modelVersion>-->
+<!--  <groupId>com.findit</groupId>-->
+<!--  <artifactId>Findit-App</artifactId>-->
+<!--  <version>0.0.1-SNAPSHOT</version>-->
+<!--  <dependencies>-->
+<!--  -->
+<!--  &lt;!&ndash; https://mvnrepository.com/artifact/io.appium/java-client &ndash;&gt;-->
+<!--	<dependency>-->
+<!--        <groupId>io.appium</groupId>-->
+<!--        <artifactId>java-client</artifactId>-->
+<!--        <version>9.3.0</version> &lt;!&ndash; Check for the latest version &ndash;&gt;-->
+<!--    </dependency>-->
+
+<!--	&lt;!&ndash; https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java &ndash;&gt;-->
+<!--	<dependency>-->
+<!--	    <groupId>org.seleniumhq.selenium</groupId>-->
+<!--	    <artifactId>selenium-java</artifactId>-->
+<!--	    <version>4.23.0</version>-->
+<!--	</dependency>-->
+<!--	-->
+<!--	&lt;!&ndash; https://mvnrepository.com/artifact/org.testng/testng &ndash;&gt;-->
+<!--	<dependency>-->
+<!--	    <groupId>org.testng</groupId>-->
+<!--	    <artifactId>testng</artifactId>-->
+<!--	    <version>7.10.2</version>-->
+<!--	    <scope>test</scope>-->
+<!--	</dependency>-->
+<!--	-->
+
+<!--    &lt;!&ndash; https://mvnrepository.com/artifact/io.qameta.allure/allure-testng &ndash;&gt;-->
+<!--    <dependency>-->
+<!--        <groupId>io.qameta.allure</groupId>-->
+<!--        <artifactId>allure-testng</artifactId>-->
+<!--        <version>2.29.1</version>-->
+<!--    </dependency>-->
+
+<!--      &lt;!&ndash; https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core &ndash;&gt;-->
+<!--      <dependency>-->
+<!--          <groupId>org.apache.logging.log4j</groupId>-->
+<!--          <artifactId>log4j-core</artifactId>-->
+<!--          <version>2.24.3</version>-->
+<!--      </dependency>-->
+
+<!--      &lt;!&ndash; https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api &ndash;&gt;-->
+<!--      <dependency>-->
+<!--          <groupId>org.apache.logging.log4j</groupId>-->
+<!--          <artifactId>log4j-api</artifactId>-->
+<!--          <version>2.24.3</version>-->
+<!--      </dependency>-->
+
+<!--      &lt;!&ndash; https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl &ndash;&gt;-->
+<!--      <dependency>-->
+<!--          <groupId>org.apache.logging.log4j</groupId>-->
+<!--          <artifactId>log4j-slf4j-impl</artifactId>-->
+<!--          <version>2.24.3</version>-->
+<!--      </dependency>-->
+
+<!--      <dependency>-->
+<!--          <groupId>org.seleniumhq.selenium</groupId>-->
+<!--          <artifactId>selenium-java</artifactId>-->
+<!--          <version>4.23.0</version>-->
+<!--          <exclusions>-->
+<!--              <exclusion>-->
+<!--                  <groupId>org.slf4j</groupId>-->
+<!--                  <artifactId>slf4j-api</artifactId>-->
+<!--              </exclusion>-->
+<!--              <exclusion>-->
+<!--                  <groupId>org.slf4j</groupId>-->
+<!--                  <artifactId>slf4j-log4j12</artifactId>-->
+<!--              </exclusion>-->
+<!--          </exclusions>-->
+<!--      </dependency>-->
+
+
+
+<!--  </dependencies>-->
+
+
+<!--</project>-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.findit</groupId>
+    <artifactId>Findit-App</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <dependencies>
+
+        <!-- Appium Java client -->
+        <dependency>
+            <groupId>io.appium</groupId>
+            <artifactId>java-client</artifactId>
+            <version>9.3.0</version>
+        </dependency>
+
+
+        <!-- TestNG -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>7.10.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Allure TestNG -->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-testng</artifactId>
+            <version>2.29.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>7.10.2</version>
+            <scope>compile</scope>
+        </dependency>
+
+
+    </dependencies>
+
+</project>
