@@ -90,8 +90,8 @@ public class BaseTest {
 
     @BeforeClass
     @Parameters("platformName") // TestNG parameter
-    public void setup(@Optional("Android") String platformName) throws Exception {
-        BasePage.initializeDriver(platformName); // Initialize driver from BasePage
+    public void setup() throws Exception {
+        BasePage.initializeDriver(); // Initialize driver from BasePage
         driver = BasePage.driver; // Assign driver to local instance
         this.setCredential();
         this.loginPage = new LoginPage(); // Pass driver instance to page classes

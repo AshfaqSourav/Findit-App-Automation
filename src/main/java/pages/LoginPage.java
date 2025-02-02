@@ -88,6 +88,7 @@ public class LoginPage extends BasePage {
             String locator = getLocator(locatorKey, LocatorClassName.LOGIN_LOCATOR_CLASS.toString());
             WebElement otpField = waitUntilElementIsVisible(LocatorType.XPATH, locator); // Use WebElement
             otpField.click();
+            otpField.clear();
             otpField.sendKeys(otps[i]);
         }
         hideKeyboard();
@@ -98,11 +99,11 @@ public class LoginPage extends BasePage {
         this.sleep(2000);
 
         // Clicking on the "LOGIN_WITH_EMAIL_BUTTON"
-        this.clickButton("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.UI_AUTOMATOR);
+        this.clickButton("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         logger.info("Clicked on LOGIN_WITH_EMAIL_BUTTON");
 
         // Entering email into the text field
-        this.clickTextField("LOGIN_EMAIL_TEXT", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.UI_AUTOMATOR, email);
+        this.clickTextField("LOGIN_EMAIL_TEXT", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH, email);
         logger.info("Entered email: {}", email);
 
         // Proceeding with "LOGIN_EMAIL_NEXT_BUTTON"
@@ -121,10 +122,11 @@ public class LoginPage extends BasePage {
         logger.info("Entered OTP successfully");
 
         // Verify login and allow notifications
-        this.clickButton("LOGIN_EMAIL_VERIFY_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.UI_AUTOMATOR);
+        this.clickButton("LOGIN_EMAIL_VERIFY_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         logger.info("Clicked on LOGIN_EMAIL_VERIFY_BUTTON");
+//        waitForVisibilityOfElement("TURN_ON_NOTIFICATION_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,30);
 
-        this.clickButton("TURN_ON_NOTIFICATION_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.UI_AUTOMATOR);
+        this.clickButton("TURN_ON_NOTIFICATION_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         logger.info("Clicked on TURN_ON_NOTIFICATION_BUTTON");
 
         this.clickButton("ALLOW_NOTIFICATION", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.ID);

@@ -9,12 +9,14 @@
             <class name="tests.LogoutTest" />
         </classes>
     </test>
- <!-- <test name="iOS Tests">
+ <test name="iOS Tests">
         <parameter name="platformName" value="iOS" />
         <classes>
             <class name="tests.LoginPageTest" />
+            <class name="tests.ProductUploadTest" />
+            <class name="tests.LogoutTest" />
         </classes>
-    </test>-->   
+    </test>
  
  
 </suite>

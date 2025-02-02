@@ -66,6 +66,40 @@ public class DeviceConfig {
             throw new RuntimeException("Failed to load Config.properties");
         }
     }
+    public static DesiredCapabilities getCapabilities(String platformName) {
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+
+        switch (platformName.toLowerCase()) {
+            case "android":
+                capabilities = getAndroidCapabilities();
+                break;
+
+            case "ios":
+                capabilities = getIOSCapabilities();
+                break;
+
+            default:
+                throw new IllegalArgumentException("Unsupported platform: " + platformName);
+        }
+
+        return capabilities;
+    }
+
+    public static String detectPlatform() {
+        String osName = System.getProperty("os.name").toLowerCase();
+        if (osName.contains("mac") || osName.contains("ios")) {
+            return "iOS";
+        } else if (osName.contains("android")) {
+            return "Android";
+        } else {
+            throw new RuntimeException("Unable to detect platform. Please ensure the device is connected and recognized.");
+        }
+    }
+
+    public static DesiredCapabilities getDynamicCapabilities() {
+        String platformName = detectPlatform();
+        return getCapabilities(platformName);
+    }
 
     public static DesiredCapabilities getAndroidCapabilities() {
         DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -87,8 +121,22 @@ public class DeviceConfig {
         capabilities.setCapability("appium:platformName", properties.getProperty("iosPlatformName"));
         capabilities.setCapability("appium:deviceName", properties.getProperty("iosDeviceName"));
         capabilities.setCapability("appium:automationName", properties.getProperty("iosAutomationName"));
-        capabilities.setCapability("appium:app", System.getProperty("user.dir") + "/" + properties.getProperty("iosAppPath"));
+        capabilities.setCapability("appium:udid",properties.getProperty("iosUdid") );
+        capabilities.setCapability("appium:bundleId",properties.getProperty("iosBundleId") );
+        capabilities.setCapability("appium:platformVersion",properties.getProperty("iosPlatformVersion") );
+        capabilities.setCapability("appium:noReset", false);
+        capabilities.setCapability("appium:newCommandTimeout", 300);
+        capabilities.setCapability("appium:wdaLaunchTimeout", 60000);
+        capabilities.setCapability("appium:wdaConnectionTimeout", 60000);
+        capabilities.setCapability("appium:unicodeKeyboard", true);
+        capabilities.setCapability("appium:noReset", false);
+        capabilities.setCapability("appium:autoGrantPermissions", true);
+        capabilities.setCapability("appium:usePrebuiltApp", true);
+        capabilities.setCapability("appium:resetOnLaunch", true);
+        capabilities.setCapability("appium:autoAcceptAlerts", true);
+        capabilities.setCapability("appium:clearSystemFiles", true);
         return capabilities;
+
     }
 }
 

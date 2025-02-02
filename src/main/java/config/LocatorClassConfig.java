@@ -23,7 +23,7 @@ public class LocatorClassConfig {
         // Add iOS locator classes
         iosLocators.put("LoginPage", LoginPageLocatorsIOS.class);
         iosLocators.put("ProductUploadPage", ProductUploadLocatorsIOS.class);
-        androidLocators.put("LogoutPage", LogoutPageLocatorsIOS.class);
+        iosLocators.put("LogoutPage", LogoutPageLocatorsIOS.class);
     }
 
 }

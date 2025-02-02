@@ -253,6 +253,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
+
+import java.net.MalformedURLException;
 import java.time.Duration;
 import java.util.Collections;
 
@@ -261,6 +263,7 @@ import java.lang.reflect.Field;
 import java.net.URL;
 import java.time.Duration;
 import java.util.Collections;
+
 
 public class BasePage {
 
@@ -273,22 +276,14 @@ public class BasePage {
         PageFactory.initElements(new AppiumFieldDecorator(BasePage.driver), this);
     }
 
-    public static void initializeDriver(String platformName) throws Exception {
+    public static void initializeDriver() throws Exception {
         BasePage.startAppiumServer();
-        platform = platformName;
-        DesiredCapabilities capabilities;
+        platform = DeviceConfig.detectPlatform();
 
-        if (platformName.equalsIgnoreCase("Android")) {
-            capabilities = DeviceConfig.getAndroidCapabilities();
-            driver = new AndroidDriver(new URL(DeviceConfig.properties.getProperty("serverURL")+ "/wd/hub"), capabilities);
-        } else if (platformName.equalsIgnoreCase("iOS")) {
-            capabilities = DeviceConfig.getIOSCapabilities();
-            driver = new IOSDriver(new URL(DeviceConfig.properties.getProperty("serverURL")+ "/wd/hub"), capabilities);
-        } else {
-            throw new IllegalArgumentException("Invalid platform name: " + platformName);
-        }
-
-        logger.info("Driver initialized for platform: {}", platformName);
+        DesiredCapabilities capabilities = DeviceConfig.getDynamicCapabilities();
+        String serverURL = DeviceConfig.properties.getProperty("serverURL") + "/wd/hub";
+        driver = new AppiumDriver(new URL(serverURL), capabilities);
+        System.out.println("Driver initialized for platform: {}"+ platform);
     }
 
     public static void quitDriver() {
@@ -303,6 +298,7 @@ public class BasePage {
                     .withArgument(() -> "--base-path", "/wd/hub")
                     .withLogFile(new File("appium_server_logs.txt"))
                     .withArgument(() -> "--relaxed-security")
+                    .withTimeout(Duration.ofSeconds(60))
                     .build();
         }
         appiumService.start();
@@ -318,6 +314,7 @@ public class BasePage {
     }
 
     public static String getPlatform() {
+        System.out.println("Returning platform: {}" + platform);
         return platform;
     }
 
@@ -568,6 +565,11 @@ public class BasePage {
         } else {
             System.out.println("Field already contains value: " + fieldValue);
         }
+    }
+    public static void restartFreshApp() throws Exception {
+        driver.quit();
+        BasePage.initializeDriver();
+        System.out.println("12112");
     }
 }
 
