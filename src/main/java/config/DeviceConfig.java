@@ -66,6 +66,7 @@ public class DeviceConfig {
         capabilities.setCapability("appium:noReset", false);
         capabilities.setCapability("appium:fullReset", false);
         capabilities.setCapability("appium:unicodeKeyboard", true);
+        capabilities.setCapability("appium:autoGrantPermissions", true);
         return capabilities;
     }
 

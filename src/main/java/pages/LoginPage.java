@@ -16,6 +16,24 @@ public class LoginPage extends BasePage {
         super();
     }
 
+    public void LoginWithEmail(String email) {
+        waitForVisibilityOfElement("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,10);
+        this.clickButton("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        this.clickTextField("LOGIN_EMAIL_TEXT", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH, email);
+        this.clickButton("LOGIN_EMAIL_NEXT_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        this.enterOtp(
+                DeviceConfig.properties.getProperty("login.password1"),
+                DeviceConfig.properties.getProperty("login.password2"),
+                DeviceConfig.properties.getProperty("login.password3"),
+                DeviceConfig.properties.getProperty("login.password4"),
+                DeviceConfig.properties.getProperty("login.password5"),
+                DeviceConfig.properties.getProperty("login.password6")
+        );
+        this.clickButton("LOGIN_EMAIL_VERIFY_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        this.clickButton("TURN_ON_NOTIFICATION_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        waitForVisibilityOfElement("PROFILE_BUTTON", LocatorClassName.LOGOUT_LOCATOR_CLASS.toString(), LocatorType.XPATH,10);
+    }
+
     // Example: OTP Handling
     public void enterOtp(String... otps) {
         for (int i = 0; i < otps.length; i++) {
@@ -27,47 +45,5 @@ public class LoginPage extends BasePage {
             otpField.sendKeys(otps[i]);
         }
         hideKeyboard();
-    }
-
-
-    public void LoginWithEmail(String email) {
-        this.sleep(2000);
-
-        // Clicking on the "LOGIN_WITH_EMAIL_BUTTON"
-        this.clickButton("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
-        logger.info("Clicked on LOGIN_WITH_EMAIL_BUTTON");
-
-        // Entering email into the text field
-        this.clickTextField("LOGIN_EMAIL_TEXT", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH, email);
-        logger.info("Entered email: {}", email);
-
-        // Proceeding with "LOGIN_EMAIL_NEXT_BUTTON"
-        this.clickButton("LOGIN_EMAIL_NEXT_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
-        logger.info("Clicked on LOGIN_EMAIL_NEXT_BUTTON");
-
-        // Enter OTP using predefined password fields in the config
-        this.enterOtp(
-                DeviceConfig.properties.getProperty("login.password1"),
-                DeviceConfig.properties.getProperty("login.password2"),
-                DeviceConfig.properties.getProperty("login.password3"),
-                DeviceConfig.properties.getProperty("login.password4"),
-                DeviceConfig.properties.getProperty("login.password5"),
-                DeviceConfig.properties.getProperty("login.password6")
-        );
-        logger.info("Entered OTP successfully");
-
-        // Verify login and allow notifications
-        this.clickButton("LOGIN_EMAIL_VERIFY_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
-        logger.info("Clicked on LOGIN_EMAIL_VERIFY_BUTTON");
-//        waitForVisibilityOfElement("TURN_ON_NOTIFICATION_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,30);
-
-        this.clickButton("TURN_ON_NOTIFICATION_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
-        logger.info("Clicked on TURN_ON_NOTIFICATION_BUTTON");
-
-        this.clickButton("ALLOW_NOTIFICATION", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.ID);
-        logger.info("Clicked on ALLOW_NOTIFICATION");
-
-        // Waiting for a few seconds to complete the login process
-        this.sleep(3000);
     }
 }
