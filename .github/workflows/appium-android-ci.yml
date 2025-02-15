@@ -52,16 +52,18 @@ jobs:
       - name: Start Android Emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
+          api-level: 29
           target: google_apis
           arch: x86_64
+          profile: pixel_4
+          ram-size: 4096M
+          disk-size: 4G
           disable-animations: true
           no-window: true
-          profile: Nexus 6
-          ram-size: 2048M
-          disk-size: 2G
           script: |
             adb wait-for-device
+            sleep 30  # Ensure emulator is fully booted
+            adb shell settings put system screen_off_timeout 2147483647
             adb shell input keyevent 82
             adb devices
 
