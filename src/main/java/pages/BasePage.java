@@ -42,7 +42,7 @@ public class BasePage {
     }
 
     public static void initializeDriver() throws Exception {
-        BasePage.startAppiumServer();
+//        BasePage.startAppiumServer();
         platform = DeviceConfig.detectPlatform();
 
         DesiredCapabilities capabilities = DeviceConfig.getDynamicCapabilities();

@@ -56,6 +56,11 @@ jobs:
               exit 1
             fi
             echo "✅ Appium server is running!"
+      - name: Install Android SDK
+        run: |
+          yes | sdkmanager --licenses > /dev/null
+          sdkmanager --install 'build-tools;35.0.0' platform-tools 'platforms;android-25' --verbose
+
   run-tests:
     needs: setup-environment
     runs-on: ubuntu-latest
