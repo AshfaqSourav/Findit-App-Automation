@@ -44,7 +44,9 @@ jobs:
             appium driver install uiautomator2
             appium -v
             which appium
-            ls -la /usr/local/lib/node_modules/appium/build/lib
+            APP_PATH=$(npm root -g)/appium/build/lib/main.js
+            echo "✅ Appium main.js should be at: $APP_PATH"
+            ls -la $APP_PATH || echo "❌ Appium main.js is missing!"
 
       - name: Start Appium Server
         run: |
