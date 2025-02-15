@@ -52,9 +52,11 @@ jobs:
       - name: Start Android Emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 25
+          api-level: 30
           target: google_apis
           arch: x86_64
+          disable-animations: true
+          no-window: true
           profile: Nexus 6
           ram-size: 2048M
           disk-size: 2G
