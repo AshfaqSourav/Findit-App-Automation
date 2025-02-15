@@ -37,10 +37,18 @@ jobs:
             maven-${{ runner.os }}-
 
       - name: Install Appium & Dependencies
-        if: steps.cache-dependencies.outputs.cache-hit != 'true'
         run: |
-          npm install -g appium
-          appium driver install uiautomator2
+            npm uninstall -g appium || true
+            npm cache clean --force
+            npm install -g appium@latest
+            appium driver install uiautomator2
+            appium -v
+            which appium
+            ls -la /usr/local/lib/node_modules/appium/build/lib
+
+      - name: Start Appium Server
+        run: |
+          appium --base-path /wd/hub --log appium_server.log &
 
   run-tests:
     needs: setup-environment
