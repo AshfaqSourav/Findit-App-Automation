@@ -58,17 +58,38 @@ public class BasePage {
 
     public static void startAppiumServer() {
         if (appiumService == null) {
+            String appiumPath;
+
+            // Detect OS and set the correct Appium main.js path
+            if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                appiumPath = "C:\\Users\\ashfa\\AppData\\Roaming\\npm\\node_modules\\appium\\build\\lib\\main.js";
+            } else {
+                appiumPath = "/usr/local/lib/node_modules/appium/build/lib/main.js";
+            }
+
+            File appiumMainScript = new File(appiumPath);
+            if (!appiumMainScript.exists()) {
+                throw new RuntimeException("❌ Appium main.js not found at: " + appiumPath);
+            }
+
+            // Configure Appium service
             appiumService = new AppiumServiceBuilder()
-                    .usingPort(4723)
+                    .withAppiumJS(appiumMainScript) // Explicitly set Appium path
+                    .usingPort(4723) // Set Appium to use port 4723
                     .withArgument(() -> "--base-path", "/wd/hub")
                     .withLogFile(new File("appium_server_logs.txt"))
-                    .withArgument(() -> "--relaxed-security")
-                    .withTimeout(Duration.ofSeconds(60))
+                    .withArgument(() -> "--relaxed-security") // Fix argument format
                     .build();
-        }
-        appiumService.start();
 
-        logger.info("Appium server started...");
+            appiumService.start(); // Start Appium service with timeout handling
+            try {
+                Thread.sleep(5000); // Allow Appium time to initialize
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            System.out.println("✅ Appium server started...");
+        }
     }
 
     public static void stopAppiumServer() {
