@@ -4,13 +4,9 @@ import enums.LocatorClassName;
 import config.DeviceConfig;
 import enums.LocatorType;
 import org.openqa.selenium.WebElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class LoginPage extends BasePage {
-
-    private static final Logger logger = LoggerFactory.getLogger(LoginPage.class);
 
     public LoginPage() {
         super();

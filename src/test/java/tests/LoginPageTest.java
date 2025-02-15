@@ -7,7 +7,7 @@ import pages.BasePage;
 public class LoginPageTest extends BaseTest {
     @Test
     public void testLoginWithEmail() throws Exception {
-        BasePage.restartFreshApp();
+//        BasePage.restartFreshApp();
     	loginPage.LoginWithEmail(this.buyerEmail);
     }
 }
