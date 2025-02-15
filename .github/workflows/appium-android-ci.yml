@@ -49,7 +49,12 @@ jobs:
       - name: Start Appium Server
         run: |
           appium --base-path /wd/hub --log appium_server.log &
-
+          sleep 10
+            if ! nc -z localhost 4723; then
+              echo "❌ Appium server failed to start!"
+              exit 1
+            fi
+            echo "✅ Appium server is running!"
   run-tests:
     needs: setup-environment
     runs-on: ubuntu-latest
