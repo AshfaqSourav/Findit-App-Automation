@@ -1,0 +1,107 @@
+name: Run Android Tests in GitHub Runner
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  setup-environment:
+    runs-on: ubuntu-latest
+    outputs:
+      cache-hit: ${{ steps.cache-dependencies.outputs.cache-hit }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+
+      - name: Cache Maven Dependencies
+        id: cache-dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-${{ runner.os }}-
+
+      - name: Install Appium & Dependencies
+        if: steps.cache-dependencies.outputs.cache-hit != 'true'
+        run: |
+          npm install -g appium
+          appium driver install uiautomator2
+
+  run-tests:
+    needs: setup-environment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Start Android Emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 25
+          target: google_apis
+          arch: x86_64
+          profile: Nexus 6
+          ram-size: 2048M
+          disk-size: 2G
+          script: |
+            adb wait-for-device
+            adb shell input keyevent 82
+            adb devices
+
+      - name: Run Mobile Tests
+        run: mvn clean test
+        timeout-minutes: 30
+
+      - name: Archive Test Results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-results
+          path: allure-results
+
+#  generate-report:
+#    needs: run-tests
+#    if: always()
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout gh-pages for History
+#        uses: actions/checkout@v4
+#        with:
+#          ref: gh-pages
+#          path: gh-pages
+#          persist-credentials: false
+#
+#      - name: Download Test Results
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: allure-results
+#          path: allure-results
+#
+#      - name: Generate Allure Report
+#        uses: simple-elf/allure-report-action@v1.7
+#        with:
+#          gh_pages: gh-pages
+#          allure_history: allure-history
+#          allure_results: allure-results
+#
+#      - name: Publish Test Report
+#        uses: peaceiris/actions-gh-pages@v3
+#        with:
+#          github_token: ${{ secrets.TOKEN }}
+#          publish_branch: gh-pages
+#          publish_dir: allure-history
