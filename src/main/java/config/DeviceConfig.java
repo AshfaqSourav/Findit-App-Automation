@@ -64,7 +64,7 @@ public class DeviceConfig {
         capabilities.setCapability("appium:newCommandTimeout", Integer.parseInt(properties.getProperty("newCommandTimeout")));
         capabilities.setCapability("appium:app", System.getProperty("user.dir") + "/" + properties.getProperty("appPath"));
         capabilities.setCapability("appium:noReset", false);
-        capabilities.setCapability("appium:fullReset", false);
+        capabilities.setCapability("appium:fullReset", true);
         capabilities.setCapability("appium:unicodeKeyboard", true);
         capabilities.setCapability("appium:autoGrantPermissions", true);
         return capabilities;
