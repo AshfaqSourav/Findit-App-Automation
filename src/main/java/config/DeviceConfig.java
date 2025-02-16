@@ -42,7 +42,7 @@ public class DeviceConfig {
         String osName = System.getProperty("os.name").toLowerCase();
         if (osName.contains("mac") || osName.contains("ios")) {
             return "iOS";
-        } else if (osName.contains("windows") || osName.contains("android")) {
+        } else if (osName.contains("windows") || osName.contains("linux") || osName.contains("android")) {
             return "Android";
         } else {
             throw new RuntimeException("Unable to detect platform. Please ensure the device is connected and recognized.");
