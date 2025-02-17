@@ -60,16 +60,16 @@ public class BasePage {
         if (appiumService == null) {
             String appiumPath = System.getenv("APPIUM_PATH");
 
-            // Log environment variable for debugging
-            System.out.println("🔍 Checking APPIUM_PATH: " + appiumPath);
+            // Debugging: Print the current environment variable
+            System.out.println("🔍 Checking APPIUM_PATH from env: " + appiumPath);
 
-            // Fallback if APPIUM_PATH is not set or invalid
-            if (appiumPath == null || appiumPath.isEmpty() || !new File(appiumPath).exists()) {
-                System.out.println("⚠️ APPIUM_PATH is not set or invalid, checking default locations...");
+            // Forcefully reload environment variables if APPIUM_PATH is null
+            if (appiumPath == null || appiumPath.isEmpty()) {
+                System.out.println("⚠️ APPIUM_PATH is not set, checking default locations...");
                 String[] possiblePaths = {
                         System.getenv("HOME") + "/.npm-global/lib/node_modules/appium/build/lib/main.js",
                         "/usr/local/lib/node_modules/appium/build/lib/main.js",
-                        "/opt/hostedtoolcache/node/20.18.2/x64/lib/node_modules/appium/build/lib/main.js"
+                        "/opt/hostedtoolcache/node/20.18.2/x64/lib/node_modules/appium/build/lib/main.js" // ✅ Correct CI/CD path
                 };
 
                 for (String path : possiblePaths) {
@@ -80,6 +80,7 @@ public class BasePage {
                 }
             }
 
+            // Validate final Appium path
             if (appiumPath == null || appiumPath.isEmpty() || !new File(appiumPath).exists()) {
                 throw new RuntimeException("❌ Appium main.js not found! Check installation.");
             }
@@ -105,6 +106,7 @@ public class BasePage {
             System.out.println("✅ Appium server started at: " + appiumPath);
         }
     }
+
 
     public static void stopAppiumServer() {
         if (appiumService != null && appiumService.isRunning()) {

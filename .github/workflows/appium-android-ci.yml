@@ -184,18 +184,21 @@ jobs:
           npm install -g appium@latest
           appium driver install uiautomator2
           
-           # Find correct Appium path
-          export APPIUM_PATH=$(npm root -g)/appium/build/lib/main.js
+          # Find correct Appium path
+          APPIUM_PATH=$(npm root -g)/appium/build/lib/main.js
           echo "Setting Appium Path..."
-          echo "APPIUM_PATH=$APPIUM_PATH" >> $GITHUB_ENV 
+          
+          # ✅ Persist across steps correctly
+          echo "APPIUM_PATH=$APPIUM_PATH" >> $GITHUB_ENV
+          echo "export APPIUM_PATH=$APPIUM_PATH" >> $HOME/.bashrc  # ✅ Ensure persistence in shell
           echo "Appium Main.js Path: $APPIUM_PATH"
-
+      
           # Verify if Appium main.js exists
           if [ -f "$APPIUM_PATH" ]; then
             echo "✅ Appium main.js found!"
           else
             echo "❌ Appium main.js is missing! Check installation."
-            exit 1
+          exit 1
           fi
 
           appium -v
