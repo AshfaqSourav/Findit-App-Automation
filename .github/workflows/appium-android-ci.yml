@@ -217,25 +217,36 @@ jobs:
       - name: Start Android Emulator (API 30, More RAM)
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30  # More stable than API 25
-          target: google_apis
-          arch: x86_64
-          profile: pixel_4
-          ram-size: 8192M   # Increase RAM to 8GB
-          disk-size: 8G     # Increase disk size
-          disable-animations: true
-          no-window: true
-          script: |
-            adb wait-for-device
-            echo "⏳ Waiting for emulator to fully boot..."
-            while [[ "$(adb shell getprop sys.boot_completed | tr -d '\r')" != "1" ]]; do
-              echo "🔄 Emulator still booting..."
-              sleep 5
-            done
-            echo "✅ Emulator fully booted!"
-            sleep 30
-            adb shell input keyevent 82  # Unlock screen
-            adb devices
+            api-level: 30
+            target: google_apis
+            arch: x86_64
+            profile: pixel_4
+            ram-size: 8192M
+            disk-size: 8G
+            disable-animations: true
+            no-window: true
+            force-avd-creation: true
+            emulator-options: "-gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -no-snapshot-save"
+            script: |
+              adb wait-for-device
+              echo "⏳ Waiting for emulator to fully boot..."
+              
+              # Fix while-loop syntax issue
+              while [[ "$(adb shell getprop sys.boot_completed | tr -d '\r')" != "1" ]]; do
+                echo "🔄 Emulator still booting..."
+                sleep 10
+              done
+              
+              echo "✅ Emulator fully booted!"
+              sleep 30  # Give time for ADB to stabilize
+              
+              # Ensure ADB connection is stable
+              adb kill-server
+              adb start-server
+              sleep 10
+              
+              adb devices
+              adb shell input keyevent 82  # Unlock screen
 
       - name: Run Mobile Tests
         run: mvn clean test
