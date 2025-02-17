@@ -214,13 +214,12 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: Start Android Emulator (API 30, Nexus 6)
+      - name: Start Android Emulator (API 30)
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 30
           target: google_apis
           arch: x86_64
-          profile: nexus_6  # ✅ Use 'nexus_6' instead of 'nexus_6p'
           ram-size: 6144M   # ✅ 6GB RAM for better stability
           disk-size: 8G
           force-avd-creation: true
