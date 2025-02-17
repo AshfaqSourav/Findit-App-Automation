@@ -73,7 +73,7 @@ public class DeviceConfig {
 //            apkPath = System.getProperty("user.dir") + "/" + properties.getProperty("appPath");
 //        }
 
-        capabilities.setCapability("appium:app", apkPath);
+//        capabilities.setCapability("appium:app", apkPath);
         capabilities.setCapability("appium:noReset", false);
         capabilities.setCapability("appium:fullReset", true);
         capabilities.setCapability("appium:unicodeKeyboard", true);
