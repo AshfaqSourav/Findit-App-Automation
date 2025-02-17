@@ -1,3 +1,142 @@
+#name: Run Android Tests in GitHub Runner
+#
+#on:
+#  push:
+#    branches:
+#      - main
+#
+#jobs:
+#  setup-environment:
+#    runs-on: ubuntu-latest
+#    outputs:
+#      cache-hit: ${{ steps.cache-dependencies.outputs.cache-hit }}
+#    steps:
+#      - name: Checkout Repository
+#        uses: actions/checkout@v4
+#
+#      - name: Enable KVM
+#        run: |
+#          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+#          sudo udevadm control --reload-rules
+#          sudo udevadm trigger --name-match=kvm
+#
+#      - name: Remove Old Java
+#        run: sudo apt-get remove -y --purge openjdk-17-* || true
+#      - name: Setup Java
+#        uses: actions/setup-java@v3
+#        with:
+#          distribution: 'temurin'
+#          java-version: '21'
+#          cache: 'maven'
+#      - name: Verify Java Version
+#        run: java -version
+#
+#      - name: Setup NodeJS
+#        uses: actions/setup-node@v4
+#        with:
+#            node-version: '20'
+#      - name: Cache Maven Dependencies
+#        id: cache-dependencies
+#        uses: actions/cache@v3
+#        with:
+#          path: ~/.m2
+#          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+#          restore-keys: |
+#            maven-${{ runner.os }}-
+#
+#      - name: Install Appium & Dependencies
+#        run: |
+#            npm uninstall -g appium || true
+#            npm cache clean --force
+#            npm install -g appium@latest
+#            appium driver install uiautomator2
+#            appium -v
+#            which appium
+#            echo "Appium Root Path: $(npm root -g)"
+#            ls -la $(npm root -g)/appium/build/lib/ || echo "❌ Appium main.js is missing!"
+#
+#      - name: Start Appium Server
+#        run: |
+#          appium --base-path /wd/hub --log appium_server.log &
+#          sleep 10
+#            if ! nc -z localhost 4723; then
+#              echo "❌ Appium server failed to start!"
+#              exit 1
+#            fi
+#            echo "✅ Appium server is running!"
+#
+#  run-tests:
+#    needs: setup-environment
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout Repository
+#        uses: actions/checkout@v4
+#
+#      - name: Start Android Emulator (API 30, More RAM)
+#        uses: reactivecircus/android-emulator-runner@v2
+#        with:
+#            api-level: 30  # More stable than API 25
+#            target: google_apis
+#            arch: x86_64
+#            profile: pixel_4
+#            ram-size: 8192M   # Increase RAM to 8GB
+#            disk-size: 8G     # Increase disk size
+#            disable-animations: true
+#            no-window: true
+#            script: |
+#              adb wait-for-device
+#              echo "⏳ Waiting for emulator to fully boot..."
+#              while [[ "$(adb shell getprop sys.boot_completed | tr -d '\r')" != "1" ]]; do
+#                echo "🔄 Emulator still booting..."
+#                sleep 5
+#              done
+#              echo "✅ Emulator fully booted!"
+#              sleep 30
+#              adb shell input keyevent 82  # Unlock screen
+#              adb devices
+#
+#      - name: Run Mobile Tests
+#        run: mvn clean test
+#        timeout-minutes: 30
+#
+#      - name: Archive Test Results
+#        if: always()
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: allure-results
+#          path: allure-results
+#
+#  generate-report:
+#    needs: run-tests
+#    if: always()
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout gh-pages for History
+#        uses: actions/checkout@v4
+#        with:
+#          ref: gh-pages
+#          path: gh-pages
+#          persist-credentials: false
+#
+#      - name: Download Test Results
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: allure-results
+#          path: allure-results
+#
+#      - name: Generate Allure Report
+#        uses: simple-elf/allure-report-action@v1.7
+#        with:
+#          gh_pages: gh-pages
+#          allure_history: allure-history
+#          allure_results: allure-results
+#
+#      - name: Publish Test Report
+#        uses: peaceiris/actions-gh-pages@v3
+#        with:
+#          github_token: ${{ secrets.TOKEN }}
+#          publish_branch: gh-pages
+#          publish_dir: allure-history
 name: Run Android Tests in GitHub Runner
 
 on:
@@ -14,21 +153,24 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Enable KVM
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
       - name: Remove Old Java
         run: sudo apt-get remove -y --purge openjdk-17-* || true
+
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '21'
           cache: 'maven'
+
       - name: Verify Java Version
         run: java -version
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Cache Maven Dependencies
         id: cache-dependencies
         uses: actions/cache@v3
@@ -40,24 +182,24 @@ jobs:
 
       - name: Install Appium & Dependencies
         run: |
-            npm uninstall -g appium || true
-            npm cache clean --force
-            npm install -g appium@latest
-            appium driver install uiautomator2
-            appium -v
-            which appium
-            echo "Appium Root Path: $(npm root -g)"
-            ls -la $(npm root -g)/appium/build/lib/ || echo "❌ Appium main.js is missing!"
+          npm uninstall -g appium || true
+          npm cache clean --force
+          npm install -g appium@latest
+          appium driver install uiautomator2
+          appium -v
+          which appium
+          echo "Appium Root Path: $(npm root -g)"
+          ls -la $(npm root -g)/appium/build/lib/ || echo "❌ Appium main.js is missing!"
 
       - name: Start Appium Server
         run: |
           appium --base-path /wd/hub --log appium_server.log &
-          sleep 10
-            if ! nc -z localhost 4723; then
-              echo "❌ Appium server failed to start!"
-              exit 1
-            fi
-            echo "✅ Appium server is running!"
+          sleep 15
+          if ! nc -z localhost 4723; then
+            echo "❌ Appium server failed to start!"
+            exit 1
+          fi
+          echo "✅ Appium server is running!"
 
   run-tests:
     needs: setup-environment
@@ -66,28 +208,34 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Start Android Emulator (API 30)
+      - name: Enable KVM (Better Placement)
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Start Android Emulator (API 30, More RAM)
         uses: reactivecircus/android-emulator-runner@v2
         with:
-            api-level: 30  # Using API 30 (More stable for CI/CD)
-            target: google_apis
-            arch: x86_64
-            profile: pixel_6
-            ram-size: 4096M
-            disk-size: 4G
-            disable-animations: true
-            no-window: true
-            script: |
-              adb wait-for-device
-              echo "Waiting for emulator to fully boot..."
-              while [[ "$(adb shell getprop sys.boot_completed | tr -d '\r')" != "1" ]]; do
-                echo "⏳ Emulator is still booting..."
-                sleep 5
-              done
-              echo "✅ Emulator fully booted!"
-              sleep 30
-              adb shell input keyevent 82
-              adb devices
+          api-level: 30  # More stable than API 25
+          target: google_apis
+          arch: x86_64
+          profile: pixel_4
+          ram-size: 8192M   # Increase RAM to 8GB
+          disk-size: 8G     # Increase disk size
+          disable-animations: true
+          no-window: true
+          script: |
+            adb wait-for-device
+            echo "⏳ Waiting for emulator to fully boot..."
+            while [[ "$(adb shell getprop sys.boot_completed | tr -d '\r')" != "1" ]]; do
+              echo "🔄 Emulator still booting..."
+              sleep 5
+            done
+            echo "✅ Emulator fully booted!"
+            sleep 30
+            adb shell input keyevent 82  # Unlock screen
+            adb devices
 
       - name: Run Mobile Tests
         run: mvn clean test
