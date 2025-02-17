@@ -238,6 +238,11 @@ jobs:
           appium -v
           which appium
 
+      - name: Debug Appium Path
+        run: |
+          echo "🔍 Checking APPIUM_PATH: $APPIUM_PATH"
+          ls -la $APPIUM_PATH || echo "❌ File not found!"
+          
 
   run-tests:
     needs: setup-environment
