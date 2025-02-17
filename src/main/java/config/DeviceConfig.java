@@ -62,7 +62,18 @@ public class DeviceConfig {
         capabilities.setCapability("appium:platformVersion", properties.getProperty("platformVersion"));
         capabilities.setCapability("appium:automationName", properties.getProperty("automationName"));
         capabilities.setCapability("appium:newCommandTimeout", Integer.parseInt(properties.getProperty("newCommandTimeout")));
-        capabilities.setCapability("appium:app", System.getProperty("user.dir") + "/" + properties.getProperty("appPath"));
+//        capabilities.setCapability("appium:app", System.getProperty("user.dir") + "/" + properties.getProperty("appPath"));
+        // Dynamically set the APK path based on the environment
+        String apkPath;
+        if (System.getenv("GITHUB_ACTIONS") != null) {
+            // Running in GitHub Actions
+            apkPath = "/home/runner/work/Findit-App/V1.2.2.apk";
+        } else {
+            // Running locally
+            apkPath = System.getProperty("user.dir") + "/" + properties.getProperty("appPath");
+        }
+
+        capabilities.setCapability("appium:app", apkPath);
         capabilities.setCapability("appium:noReset", false);
         capabilities.setCapability("appium:fullReset", true);
         capabilities.setCapability("appium:unicodeKeyboard", true);

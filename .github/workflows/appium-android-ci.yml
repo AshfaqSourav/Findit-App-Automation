@@ -153,14 +153,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Remove Old Java
-        run: sudo apt-get remove -y --purge openjdk-17-* || true
-
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '17'
           cache: 'maven'
 
       - name: Verify Java Version
@@ -224,6 +221,26 @@ jobs:
             adb wait-for-device
             adb shell input keyevent 82
             adb devices
+            echo "Waiting for emulator to boot..."
+            adb shell getprop sys.boot_completed | grep -m 1 '1'
+            echo "✅ Emulator is ready!"
+
+      - name: Keep Emulator Alive (Prevent Shutdown)
+        run: |
+          nohup adb shell input keyevent 82 &
+          sleep 10
+
+      - name: Verify APK Existence
+        run: |
+          if [ -f src/test/resources/apps/V1.2.2.apk ]; then
+            echo "✅ APK found!"
+            cp src/test/resources/apps/V1.2.2.apk /home/runner/work/Findit-App/V1.2.2.apk
+          else
+            echo "❌ APK NOT FOUND!"
+            exit 1
+          fi
+
+
 
       - name: Run Mobile Tests
         run: mvn clean test
