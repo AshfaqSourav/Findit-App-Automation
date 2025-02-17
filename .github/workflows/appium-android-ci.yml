@@ -185,9 +185,9 @@ jobs:
           appium driver install uiautomator2
           
            # Ensure correct Appium path is used
-          export APPIUM_PATH=$(npm root -g)/appium/build/lib/main.js
-          echo "Appium Main.js Path: $APPIUM_PATH"
-          ls -la $APPIUM_PATH || echo "❌ Appium main.js is missing!"
+            echo "Setting Appium Path..."
+            echo "export APPIUM_PATH=/opt/hostedtoolcache/node/20.18.2/x64/lib/node_modules/appium/build/lib/main.js" >> $GITHUB_ENV
+            echo "Appium Main.js Path: /opt/hostedtoolcache/node/20.18.2/x64/lib/node_modules/appium/build/lib/main.js"
           
           appium -v
           which appium

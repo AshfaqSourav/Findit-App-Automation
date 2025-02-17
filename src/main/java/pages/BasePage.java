@@ -58,19 +58,20 @@ public class BasePage {
 
     public static void startAppiumServer() {
         if (appiumService == null) {
-            String appiumPath;
+        String appiumPath = System.getenv("APPIUM_PATH");
 
-            // Detect OS and set the correct Appium main.js path
+        // Fallback to existing logic if APPIUM_PATH is not set
+        if (appiumPath == null || appiumPath.isEmpty()) {
             if (System.getProperty("os.name").toLowerCase().contains("win")) {
                 appiumPath = "C:\\Users\\ashfa\\AppData\\Roaming\\npm\\node_modules\\appium\\build\\lib\\main.js";
             } else {
-                // Automatically detect the installed path
                 appiumPath = System.getenv("HOME") + "/.npm-global/lib/node_modules/appium/build/lib/main.js";
                 File appiumGlobal = new File("/usr/local/lib/node_modules/appium/build/lib/main.js");
                 if (appiumGlobal.exists()) {
                     appiumPath = appiumGlobal.getAbsolutePath();
                 }
             }
+        }
 
             File appiumMainScript = new File(appiumPath);
             if (!appiumMainScript.exists()) {
