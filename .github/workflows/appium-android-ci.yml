@@ -1,3 +1,4 @@
+#
 #name: Run Android Tests in GitHub Runner
 #
 #on:
@@ -14,27 +15,21 @@
 #      - name: Checkout Repository
 #        uses: actions/checkout@v4
 #
-#      - name: Enable KVM
-#        run: |
-#          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-#          sudo udevadm control --reload-rules
-#          sudo udevadm trigger --name-match=kvm
-#
-#      - name: Remove Old Java
-#        run: sudo apt-get remove -y --purge openjdk-17-* || true
 #      - name: Setup Java
 #        uses: actions/setup-java@v3
 #        with:
 #          distribution: 'temurin'
-#          java-version: '21'
+#          java-version: '17'
 #          cache: 'maven'
+#
 #      - name: Verify Java Version
 #        run: java -version
 #
 #      - name: Setup NodeJS
 #        uses: actions/setup-node@v4
 #        with:
-#            node-version: '20'
+#          node-version: '20'
+#
 #      - name: Cache Maven Dependencies
 #        id: cache-dependencies
 #        uses: actions/cache@v3
@@ -46,24 +41,42 @@
 #
 #      - name: Install Appium & Dependencies
 #        run: |
-#            npm uninstall -g appium || true
-#            npm cache clean --force
-#            npm install -g appium@latest
-#            appium driver install uiautomator2
-#            appium -v
-#            which appium
-#            echo "Appium Root Path: $(npm root -g)"
-#            ls -la $(npm root -g)/appium/build/lib/ || echo "❌ Appium main.js is missing!"
+#          npm uninstall -g appium || true
+#          npm cache clean --force
+#          npm install -g appium@latest
+#          appium driver install uiautomator2
 #
-#      - name: Start Appium Server
-#        run: |
-#          appium --base-path /wd/hub --log appium_server.log &
-#          sleep 10
-#            if ! nc -z localhost 4723; then
-#              echo "❌ Appium server failed to start!"
-#              exit 1
-#            fi
-#            echo "✅ Appium server is running!"
+#          # Find correct Appium path
+#          APPIUM_PATH=$(npm root -g)/appium/build/lib/main.js
+#          echo "Setting Appium Path..."
+#
+#          # ✅ Persist across steps correctly
+#          echo "APPIUM_PATH=$APPIUM_PATH" >> $GITHUB_ENV
+#          echo "export APPIUM_PATH=$APPIUM_PATH" >> $HOME/.bashrc  # ✅ Ensure persistence in shell
+#          echo "Appium Main.js Path: $APPIUM_PATH"
+#
+#          # Verify if Appium main.js exists
+#          if [ -f "$APPIUM_PATH" ]; then
+#            echo "✅ Appium main.js found!"
+#          else
+#            echo "❌ Appium main.js is missing! Check installation."
+#          exit 1
+#          fi
+#
+#          appium -v
+#          which appium
+##          echo "Appium Root Path: $(npm root -g)"
+##          ls -la $(npm root -g)/appium/build/lib/ || echo "❌ Appium main.js is missing!"
+#
+##      - name: Start Appium Server
+##        run: |
+##          nohup appium --base-path /wd/hub --log appium_server.log &
+##          sleep 15
+##          if ! nc -z localhost 4723; then
+##            echo "❌ Appium server failed to start!"
+##            exit 1
+##          fi
+##          echo "✅ Appium server is running!"
 #
 #  run-tests:
 #    needs: setup-environment
@@ -72,28 +85,47 @@
 #      - name: Checkout Repository
 #        uses: actions/checkout@v4
 #
-#      - name: Start Android Emulator (API 30, More RAM)
+#      - name: Enable KVM (Better Placement)
+#        run: |
+#          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+#          sudo udevadm control --reload-rules
+#          sudo udevadm trigger --name-match=kvm
+#
+#      - name: Start Android Emulator (API 30)
 #        uses: reactivecircus/android-emulator-runner@v2
 #        with:
-#            api-level: 30  # More stable than API 25
-#            target: google_apis
-#            arch: x86_64
-#            profile: pixel_4
-#            ram-size: 8192M   # Increase RAM to 8GB
-#            disk-size: 8G     # Increase disk size
-#            disable-animations: true
-#            no-window: true
-#            script: |
-#              adb wait-for-device
-#              echo "⏳ Waiting for emulator to fully boot..."
-#              while [[ "$(adb shell getprop sys.boot_completed | tr -d '\r')" != "1" ]]; do
-#                echo "🔄 Emulator still booting..."
-#                sleep 5
-#              done
-#              echo "✅ Emulator fully booted!"
-#              sleep 30
-#              adb shell input keyevent 82  # Unlock screen
-#              adb devices
+#          api-level: 30
+#          target: google_apis
+#          arch: x86_64
+#          script: |
+#            adb wait-for-device
+#            adb shell input keyevent 82
+#            adb devices
+#            echo "Waiting for emulator to boot..."
+#            adb shell getprop sys.boot_completed | grep -m 1 '1'
+#            echo "✅ Emulator is ready!"
+#            nohup adb logcat > /dev/null 2>&1 &  # Keep emulator active
+#
+#      - name: Keep Emulator Alive (Prevent Shutdown)
+#        run: |
+#          nohup adb shell input keyevent 82 &
+#          sleep 10
+#
+#      - name: Ensure Target Directory Exists
+#        run: mkdir -p /home/runner/work/Findit-App/
+#
+#      - name: Verify APK Existence
+#        run: |
+#          if [ -f src/test/resources/apps/V1.2.2.apk ]; then
+#            echo "✅ APK found!"
+#            cp src/test/resources/apps/V1.2.2.apk /home/runner/work/Findit-App/V1.2.2.apk
+#          else
+#            echo "❌ APK NOT FOUND!"
+#            exit 1
+#          fi
+#
+#      - name: Debug Environment Variables
+#        run: printenv | grep APPIUM_PATH
 #
 #      - name: Run Mobile Tests
 #        run: mvn clean test
@@ -148,7 +180,7 @@ jobs:
   setup-environment:
     runs-on: ubuntu-latest
     outputs:
-      cache-hit: ${{ steps.cache-dependencies.outputs.cache-hit }}
+      appium_path: ${{ steps.set-appium-path.outputs.appium_path }}  # ✅ Pass APPIUM_PATH between jobs
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -178,47 +210,40 @@ jobs:
             maven-${{ runner.os }}-
 
       - name: Install Appium & Dependencies
+        id: set-appium-path  # ✅ Set an ID to reference outputs
         run: |
           npm uninstall -g appium || true
           npm cache clean --force
           npm install -g appium@latest
           appium driver install uiautomator2
           
-          # Find correct Appium path
+          # ✅ Find correct Appium path
           APPIUM_PATH=$(npm root -g)/appium/build/lib/main.js
           echo "Setting Appium Path..."
           
-          # ✅ Persist across steps correctly
-          echo "APPIUM_PATH=$APPIUM_PATH" >> $GITHUB_ENV
-          echo "export APPIUM_PATH=$APPIUM_PATH" >> $HOME/.bashrc  # ✅ Ensure persistence in shell
+          # ✅ Persist correctly for next jobs
+          echo "appium_path=$APPIUM_PATH" >> $GITHUB_ENV
+          echo "appium_path=$APPIUM_PATH" >> $GITHUB_OUTPUT  # ✅ This will allow `run-tests` to access it
+
           echo "Appium Main.js Path: $APPIUM_PATH"
-      
-          # Verify if Appium main.js exists
+
+          # ✅ Verify if Appium main.js exists
           if [ -f "$APPIUM_PATH" ]; then
             echo "✅ Appium main.js found!"
           else
             echo "❌ Appium main.js is missing! Check installation."
-          exit 1
+            exit 1
           fi
 
           appium -v
           which appium
-#          echo "Appium Root Path: $(npm root -g)"
-#          ls -la $(npm root -g)/appium/build/lib/ || echo "❌ Appium main.js is missing!"
 
-#      - name: Start Appium Server
-#        run: |
-#          nohup appium --base-path /wd/hub --log appium_server.log &
-#          sleep 15
-#          if ! nc -z localhost 4723; then
-#            echo "❌ Appium server failed to start!"
-#            exit 1
-#          fi
-#          echo "✅ Appium server is running!"
 
   run-tests:
     needs: setup-environment
     runs-on: ubuntu-latest
+    env:
+      APPIUM_PATH: ${{ needs.setup-environment.outputs.appium_path }}  # ✅ Pass APPIUM_PATH correctly
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -228,6 +253,14 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+
+      - name: Debug APPIUM_PATH Before Use  # ✅ Ensure it's properly set
+        run: |
+          echo "🔍 Checking APPIUM_PATH: $APPIUM_PATH"
+          if [ -z "$APPIUM_PATH" ]; then
+            echo "❌ APPIUM_PATH is not set! Failing job."
+            exit 1
+          fi
 
       - name: Start Android Emulator (API 30)
         uses: reactivecircus/android-emulator-runner@v2
@@ -246,7 +279,8 @@ jobs:
 
       - name: Keep Emulator Alive (Prevent Shutdown)
         run: |
-          nohup adb shell input keyevent 82 &
+          adb shell svc power stayon true  # ✅ Prevent emulator from sleeping
+          nohup adb shell input keyevent 82 &  # Keep unlocked
           sleep 10
 
       - name: Ensure Target Directory Exists
@@ -263,7 +297,7 @@ jobs:
           fi
 
       - name: Debug Environment Variables
-        run: printenv | grep APPIUM_PATH
+        run: printenv | grep APPIUM_PATH  # ✅ Ensure the variable is visible
 
       - name: Run Mobile Tests
         run: mvn clean test

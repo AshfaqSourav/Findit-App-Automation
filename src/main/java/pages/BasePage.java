@@ -42,7 +42,7 @@ public class BasePage {
     }
 
     public static void initializeDriver() throws Exception {
-//        BasePage.startAppiumServer();
+        BasePage.startAppiumServer();
         platform = DeviceConfig.detectPlatform();
 
         DesiredCapabilities capabilities = DeviceConfig.getDynamicCapabilities();
@@ -60,36 +60,23 @@ public class BasePage {
         if (appiumService == null) {
             String appiumPath = System.getenv("APPIUM_PATH");
 
-            // Debugging: Print the current environment variable
-            System.out.println("🔍 Checking APPIUM_PATH from env: " + appiumPath);
+            // Debugging logs
+            System.out.println("🔍 Checking APPIUM_PATH: " + appiumPath);
 
-            // Forcefully reload environment variables if APPIUM_PATH is null
             if (appiumPath == null || appiumPath.isEmpty()) {
-                System.out.println("⚠️ APPIUM_PATH is not set, checking default locations...");
-                String[] possiblePaths = {
-                        System.getenv("HOME") + "/.npm-global/lib/node_modules/appium/build/lib/main.js",
-                        "/usr/local/lib/node_modules/appium/build/lib/main.js",
-                        "/opt/hostedtoolcache/node/20.18.2/x64/lib/node_modules/appium/build/lib/main.js" // ✅ Correct CI/CD path
-                };
-
-                for (String path : possiblePaths) {
-                    if (new File(path).exists()) {
-                        appiumPath = path;
-                        break;
-                    }
-                }
+                throw new RuntimeException("❌ APPIUM_PATH is not set. Check GitHub Actions setup!");
             }
 
-            // Validate final Appium path
-            if (appiumPath == null || appiumPath.isEmpty() || !new File(appiumPath).exists()) {
-                throw new RuntimeException("❌ Appium main.js not found! Check installation.");
+            File appiumMainScript = new File(appiumPath);
+            if (!appiumMainScript.exists()) {
+                throw new RuntimeException("❌ Appium main.js not found at: " + appiumPath);
             }
 
             System.out.println("✅ Using Appium Path: " + appiumPath);
 
             // Configure Appium service
             appiumService = new AppiumServiceBuilder()
-                    .withAppiumJS(new File(appiumPath))
+                    .withAppiumJS(appiumMainScript)
                     .usingPort(4723)
                     .withArgument(() -> "--base-path", "/wd/hub")
                     .withLogFile(new File("appium_server_logs.txt"))
