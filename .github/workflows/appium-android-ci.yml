@@ -187,7 +187,7 @@ jobs:
            # Ensure correct Appium path is used
             echo "Setting Appium Path..."
             echo "export APPIUM_PATH=/opt/hostedtoolcache/node/20.18.2/x64/lib/node_modules/appium/build/lib/main.js" >> $GITHUB_ENV
-            echo "Appium Main.js Path: /opt/hostedtoolcache/node/20.18.2/x64/lib/node_modules/appium/build/lib/main.js"
+            echo "Appium Main.js Path: $APPIUM_PATH"
           
           appium -v
           which appium

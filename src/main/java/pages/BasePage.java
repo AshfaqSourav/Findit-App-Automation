@@ -60,18 +60,27 @@ public class BasePage {
         if (appiumService == null) {
         String appiumPath = System.getenv("APPIUM_PATH");
 
-        // Fallback to existing logic if APPIUM_PATH is not set
-        if (appiumPath == null || appiumPath.isEmpty()) {
-            if (System.getProperty("os.name").toLowerCase().contains("win")) {
-                appiumPath = "C:\\Users\\ashfa\\AppData\\Roaming\\npm\\node_modules\\appium\\build\\lib\\main.js";
-            } else {
-                appiumPath = System.getenv("HOME") + "/.npm-global/lib/node_modules/appium/build/lib/main.js";
-                File appiumGlobal = new File("/usr/local/lib/node_modules/appium/build/lib/main.js");
-                if (appiumGlobal.exists()) {
-                    appiumPath = appiumGlobal.getAbsolutePath();
+            // Fallback to known locations if APPIUM_PATH is not set
+            if (appiumPath == null || appiumPath.isEmpty()) {
+                if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                    appiumPath = "C:\\Users\\ashfa\\AppData\\Roaming\\npm\\node_modules\\appium\\build\\lib\\main.js";
+                } else {
+                    // Updated paths to check
+                    String[] possiblePaths = {
+                            System.getenv("HOME") + "/.npm-global/lib/node_modules/appium/build/lib/main.js",
+                            "/usr/local/lib/node_modules/appium/build/lib/main.js",
+                            "/opt/hostedtoolcache/node/20.18.2/x64/lib/node_modules/appium/build/lib/main.js" // ✅ Correct CI/CD path
+                    };
+
+                    for (String path : possiblePaths) {
+                        File appiumFile = new File(path);
+                        if (appiumFile.exists()) {
+                            appiumPath = path;
+                            break;
+                        }
+                    }
                 }
             }
-        }
 
             File appiumMainScript = new File(appiumPath);
             if (!appiumMainScript.exists()) {
