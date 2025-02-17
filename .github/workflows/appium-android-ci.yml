@@ -220,9 +220,6 @@ jobs:
           api-level: 30
           target: google_apis
           arch: x86_64
-          ram-size: 6144M   # ✅ 6GB RAM for better stability
-          disk-size: 8G
-          force-avd-creation: true
           emulator-options: "-gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -no-snapshot-save"
           script: |
             adb wait-for-device
