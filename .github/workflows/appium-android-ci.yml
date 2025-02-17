@@ -188,15 +188,15 @@ jobs:
           echo "Appium Root Path: $(npm root -g)"
           ls -la $(npm root -g)/appium/build/lib/ || echo "❌ Appium main.js is missing!"
 
-      - name: Start Appium Server
-        run: |
-          nohup appium --base-path /wd/hub --log appium_server.log &
-          sleep 15
-          if ! nc -z localhost 4723; then
-            echo "❌ Appium server failed to start!"
-            exit 1
-          fi
-          echo "✅ Appium server is running!"
+#      - name: Start Appium Server
+#        run: |
+#          nohup appium --base-path /wd/hub --log appium_server.log &
+#          sleep 15
+#          if ! nc -z localhost 4723; then
+#            echo "❌ Appium server failed to start!"
+#            exit 1
+#          fi
+#          echo "✅ Appium server is running!"
 
   run-tests:
     needs: setup-environment
