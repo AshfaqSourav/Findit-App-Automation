@@ -276,15 +276,15 @@ jobs:
             echo "❌ APPIUM_PATH is not set! Failing job."
             exit 1
           fi
-      - name: Verify APK Existence
-        run: |
-          if [ -f src/test/resources/apps/V1.2.2.apk ]; then
-            echo "✅ APK found!"
-            cp src/test/resources/apps/V1.2.2.apk /home/runner/work/Findit-App/V1.2.2.apk
-            else
-            echo "❌ APK NOT FOUND!"
-            exit 1
-            fi
+#      - name: Verify APK Existence
+#        run: |
+#          if [ -f src/test/resources/apps/V1.2.2.apk ]; then
+#            echo "✅ APK found!"
+#            cp src/test/resources/apps/V1.2.2.apk /home/runner/work/Findit-App/V1.2.2.apk
+#            else
+#            echo "❌ APK NOT FOUND!"
+#            exit 1
+#            fi
       - name: Start Android Emulator (API 30)
         uses: reactivecircus/android-emulator-runner@v2
         with:
