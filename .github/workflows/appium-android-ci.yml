@@ -280,17 +280,17 @@ jobs:
       - name: Start Android Emulator (API 30)
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
+          api-level: 25
           target: google_apis
           arch: x86_64
           script: |
             adb wait-for-device
             adb shell input keyevent 82
             adb devices
-            echo "Waiting for emulator to boot..."
-            adb shell getprop sys.boot_completed | grep -m 1 '1'
-            echo "✅ Emulator is ready!"
-            nohup adb logcat > /dev/null 2>&1 &  # Keep emulator active
+#            echo "Waiting for emulator to boot..."
+#            adb shell getprop sys.boot_completed | grep -m 1 '1'
+#            echo "✅ Emulator is ready!"
+#            nohup adb logcat > /dev/null 2>&1 &  # Keep emulator active
 #             nohup sleep infinity &
 
       - name: Ensure Target Directory Exists
@@ -311,8 +311,6 @@ jobs:
 
       - name: Run Mobile Tests
         run: |
-          echo "🚀 Starting emulator..."
-          nohup emulator -avd test -no-audio -no-window -gpu swiftshader_indirect > /dev/null 2>&1 &
           echo "🔄 Checking emulator status before running tests..."
           adb wait-for-device
           adb shell getprop sys.boot_completed | grep -m 1 '1'
