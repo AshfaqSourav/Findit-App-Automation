@@ -262,7 +262,8 @@ jobs:
             exit 1
           fi
 
-
+      - name: Debug Environment Variables
+        run: printenv | grep APPIUM_PATH
 
       - name: Run Mobile Tests
         run: mvn clean test
