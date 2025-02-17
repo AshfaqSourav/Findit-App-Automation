@@ -74,8 +74,7 @@ public class BasePage {
                     };
 
                     for (String path : possiblePaths) {
-                        File appiumFile = new File(path);
-                        if (appiumFile.exists()) {
+                        if (new File(path).exists()) {
                             appiumPath = path;
                             break;
                         }
