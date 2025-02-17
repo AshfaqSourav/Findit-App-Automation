@@ -277,12 +277,6 @@ jobs:
             echo "✅ Emulator is ready!"
             nohup adb logcat > /dev/null 2>&1 &  # Keep emulator active
 
-      - name: Keep Emulator Alive (Prevent Shutdown)
-        run: |
-          adb shell svc power stayon true  # ✅ Prevent emulator from sleeping
-          nohup adb shell input keyevent 82 &  # Keep unlocked
-          sleep 10
-
       - name: Ensure Target Directory Exists
         run: mkdir -p /home/runner/work/Findit-App/
 
