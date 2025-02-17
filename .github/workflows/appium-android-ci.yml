@@ -211,33 +211,43 @@ jobs:
 
       - name: Install Appium & Dependencies
         run: |
-            npm uninstall -g appium || true
-            npm cache clean --force
-            npm install -g appium@latest
-            appium driver install uiautomator2
-            
-            # ✅ Find correct Appium path
-            APPIUM_PATH=$(npm root -g)/appium/build/lib/main.js
-            
-            echo "🔍 Setting APPIUM_PATH..."
-            echo "APPIUM_PATH=$APPIUM_PATH" >> $GITHUB_ENV  # ✅ Persist across all steps
-            echo "export APPIUM_PATH=$APPIUM_PATH" >> $HOME/.bashrc  # ✅ Ensure it persists in shell
-            
-            echo "✅ Appium Main.js Path: $APPIUM_PATH"
-            # ✅ Verify if Appium main.js exists & check permissions
-            ls -la $(npm root -g)/appium/build/lib/ 
-          
-            # ✅ Verify Appium main.js exists
-            if [ -f "$APPIUM_PATH" ]; then
-              sudo chmod +rx "$APPIUM_PATH" 
-              echo "✅ Appium main.js found!"
-            else
-              echo "❌ Appium main.js is missing! Check installation."
-              exit 1
-            fi
-            
-            appium -v
-            which appium
+          npm uninstall -g appium || true
+          npm cache clean --force
+          npm install -g appium@latest
+          appium driver install uiautomator2
+
+          # ✅ Set and persist APPIUM_PATH correctly
+          export APPIUM_PATH=$(npm root -g)/appium/build/lib/main.js
+
+          echo "🔍 Setting APPIUM_PATH..."
+          echo "APPIUM_PATH=$APPIUM_PATH" >> $GITHUB_ENV  # ✅ Persist across workflow steps
+          echo "export APPIUM_PATH=$APPIUM_PATH" >> $HOME/.bashrc  # ✅ Ensure persistence in shell
+
+          echo "✅ Appium Main.js Path: $APPIUM_PATH"
+
+          # ✅ Debug: Verify the path exists
+          ls -la $(npm root -g)/appium/build/lib/
+
+          # ✅ Fix permissions for Appium main.js
+          if [ -f "$APPIUM_PATH" ]; then
+            sudo chmod +rx "$APPIUM_PATH"  # ✅ Ensure it's readable & executable
+            echo "✅ Fixed permissions for Appium main.js"
+          else
+            echo "❌ Appium main.js is missing! Check installation."
+            exit 1
+          fi
+
+          appium -v
+          which appium
+
+      - name: Debug APPIUM_PATH Before Use
+        run: |
+          echo "🔍 Checking APPIUM_PATH: $APPIUM_PATH"
+          if [ -z "$APPIUM_PATH" ]; then
+            echo "❌ APPIUM_PATH is not set! Failing job."
+            exit 1
+          fi
+      
 
       - name: Debug Appium Path
         run: |
