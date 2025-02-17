@@ -260,15 +260,7 @@ jobs:
             exit 1
           fi
           echo "✅ APPIUM_PATH is correctly set: $APPIUM_PATH"
-          
-
-  run-tests:
-    needs: setup-environment
-    runs-on: ubuntu-latest
-    env:
-      APPIUM_PATH: ${{ needs.setup-environment.outputs.appium_path }}  # ✅ Pass APPIUM_PATH correctly
-    steps:
-      - name: Checkout Repository
+            - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Enable KVM (Better Placement)
@@ -326,6 +318,14 @@ jobs:
         with:
           name: allure-results
           path: allure-results
+
+#  run-tests:
+#    needs: setup-environment
+#    runs-on: ubuntu-latest
+#    env:
+#      APPIUM_PATH: ${{ needs.setup-environment.outputs.appium_path }}  # ✅ Pass APPIUM_PATH correctly
+#    steps:
+
 
   generate-report:
     needs: run-tests
