@@ -187,7 +187,7 @@ jobs:
            # Find correct Appium path
           export APPIUM_PATH=$(npm root -g)/appium/build/lib/main.js
           echo "Setting Appium Path..."
-          echo "export APPIUM_PATH=$APPIUM_PATH" >> $GITHUB_ENV
+          echo "APPIUM_PATH=$APPIUM_PATH" >> $GITHUB_ENV 
           echo "Appium Main.js Path: $APPIUM_PATH"
 
           # Verify if Appium main.js exists
