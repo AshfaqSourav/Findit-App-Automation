@@ -260,7 +260,7 @@ jobs:
             exit 1
           fi
           echo "✅ APPIUM_PATH is correctly set: $APPIUM_PATH"
-            - name: Checkout Repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Enable KVM (Better Placement)
