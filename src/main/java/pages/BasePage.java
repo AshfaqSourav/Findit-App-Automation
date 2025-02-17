@@ -58,74 +58,22 @@ public class BasePage {
 
     public static void startAppiumServer() {
         if (appiumService == null) {
-            String appiumPath = System.getenv("APPIUM_PATH");
-
-            System.out.println("🔍 Checking APPIUM_PATH: " + appiumPath);
-
-            // Fallback if APPIUM_PATH is not set
-            if (appiumPath == null || appiumPath.isEmpty()) {
-                System.out.println("⚠️ APPIUM_PATH is not set, checking default locations...");
-                if (System.getProperty("os.name").toLowerCase().contains("win")) {
-                    appiumPath = "C:\\Users\\ashfa\\AppData\\Roaming\\npm\\node_modules\\appium\\build\\lib\\main.js";
-                } else {
-                    // Updated paths to check
-                    String[] possiblePaths = {
-                            System.getenv("HOME") + "/.npm-global/lib/node_modules/appium/build/lib/main.js",
-                            "/usr/local/lib/node_modules/appium/build/lib/main.js",
-                            "/opt/hostedtoolcache/node/20.18.2/x64/lib/node_modules/appium/build/lib/main.js" // ✅ Correct CI/CD path
-                    };
-
-                    for (String path : possiblePaths) {
-                        File appiumFile = new File(path);
-                        if (appiumFile.exists() && appiumFile.canRead()) {  // ✅ Check both existence and readability
-                            appiumPath = path;
-                            break;
-                        }
-                    }
-                }
-            }
-            // **✅ Fix: Ensure appiumPath is not null before using it**
-            if (appiumPath == null || appiumPath.isEmpty()) {
-                throw new RuntimeException("❌ Appium main.js path is null! Check installation.");
-            }
-                // ✅ Debugging: Check file existence and permissions
-            File appiumMainScript = new File(appiumPath);
-            if (!appiumMainScript.exists() || !appiumMainScript.canRead()) {
-                System.err.println("❌ Appium main.js not found or cannot be read at: " + appiumPath);
-                System.err.println("🔍 Checking file details:");
-                System.err.println("📂 Absolute Path: " + appiumMainScript.getAbsolutePath());
-                System.err.println("🔓 Readable: " + appiumMainScript.canRead());
-                System.err.println("📝 Writable: " + appiumMainScript.canWrite());
-                System.err.println("🗂️ Directory: " + appiumMainScript.isDirectory());
-                throw new RuntimeException("❌ Appium main.js not found! Check installation.");
-            }
-
-            // Configure Appium service
             appiumService = new AppiumServiceBuilder()
-                    .withAppiumJS(appiumMainScript) // Explicitly set Appium path
-                    .usingPort(4723) // Set Appium to use port 4723
+                    .usingPort(4723)
                     .withArgument(() -> "--base-path", "/wd/hub")
                     .withLogFile(new File("appium_server_logs.txt"))
-                    .withArgument(() -> "--relaxed-security") // Fix argument format
+                    .withArgument(() -> "--relaxed-security")
+                    .withTimeout(Duration.ofSeconds(60))
                     .build();
-
-            appiumService.start(); // Start Appium service with timeout handling
-            try {
-                Thread.sleep(5000); // Allow Appium time to initialize
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-
-            System.out.println("✅ Appium server started at: " + appiumPath);
         }
+        appiumService.start();
+
+        System.out.println("Appium server started...");
     }
-
-
-
     public static void stopAppiumServer() {
         if (appiumService != null && appiumService.isRunning()) {
             appiumService.stop();
-            logger.info("Appium server stopped...");
+            System.out.println("Appium server stopped...");
         }
     }
 
