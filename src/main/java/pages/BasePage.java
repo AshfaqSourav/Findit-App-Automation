@@ -62,6 +62,7 @@ public class BasePage {
 
             // Fallback to known locations if APPIUM_PATH is not set
             if (appiumPath == null || appiumPath.isEmpty()) {
+                System.out.println("⚠️ APPIUM_PATH is not set, checking default locations...");
                 if (System.getProperty("os.name").toLowerCase().contains("win")) {
                     appiumPath = "C:\\Users\\ashfa\\AppData\\Roaming\\npm\\node_modules\\appium\\build\\lib\\main.js";
                 } else {
@@ -82,14 +83,13 @@ public class BasePage {
                 }
             }
 
-            File appiumMainScript = new File(appiumPath);
-            if (!appiumMainScript.exists()) {
-                throw new RuntimeException("❌ Appium main.js not found at: " + appiumPath);
+            if (appiumPath == null || appiumPath.isEmpty() || !new File(appiumPath).exists()) {
+                throw new RuntimeException("❌ Appium main.js not found! Check installation.");
             }
 
             // Configure Appium service
             appiumService = new AppiumServiceBuilder()
-                    .withAppiumJS(appiumMainScript) // Explicitly set Appium path
+                    .withAppiumJS(new File(appiumPath)) // Explicitly set Appium path
                     .usingPort(4723) // Set Appium to use port 4723
                     .withArgument(() -> "--base-path", "/wd/hub")
                     .withLogFile(new File("appium_server_logs.txt"))
@@ -103,7 +103,7 @@ public class BasePage {
                 Thread.currentThread().interrupt();
             }
 
-            System.out.println("✅ Appium server started...");
+            System.out.println("✅ Appium server started..."+ appiumPath);
         }
     }
 
