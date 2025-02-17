@@ -229,6 +229,7 @@ jobs:
           
             # ✅ Verify Appium main.js exists
             if [ -f "$APPIUM_PATH" ]; then
+              sudo chmod +rx "$APPIUM_PATH" 
               echo "✅ Appium main.js found!"
             else
               echo "❌ Appium main.js is missing! Check installation."
