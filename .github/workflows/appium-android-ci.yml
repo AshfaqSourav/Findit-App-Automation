@@ -291,7 +291,7 @@ jobs:
             adb shell getprop sys.boot_completed | grep -m 1 '1'
             echo "✅ Emulator is ready!"
             nohup adb logcat > /dev/null 2>&1 &  # Keep emulator active
-            nohup sleep 800 > /dev/null 2>&1 &
+             nohup sleep infinity &
 
       - name: Ensure Target Directory Exists
         run: mkdir -p /home/runner/work/Findit-App/
@@ -310,7 +310,12 @@ jobs:
         run: printenv | grep APPIUM_PATH  # ✅ Ensure the variable is visible
 
       - name: Run Mobile Tests
-        run: mvn clean test
+        run: |
+          echo "🔄 Checking emulator status before running tests..."
+          adb wait-for-device
+          adb shell getprop sys.boot_completed | grep -m 1 '1'
+          echo "✅ Emulator is running, starting tests..."
+          mvn clean test
         timeout-minutes: 30
 
       - name: Archive Test Results
