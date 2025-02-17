@@ -66,24 +66,23 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Start Android Emulator
+      - name: Start Android Emulator (API 30)
         uses: reactivecircus/android-emulator-runner@v2
         with:
-            api-level: 29
+            api-level: 30  # Using API 30 (More stable for CI/CD)
             target: google_apis
             arch: x86_64
-            profile: pixel_4
+            profile: pixel_6
             ram-size: 4096M
             disk-size: 4G
             disable-animations: true
             no-window: true
             script: |
               adb wait-for-device
-              boot_completed="0"
-              while [ "$boot_completed" != "1" ]; do
+              echo "Waiting for emulator to fully boot..."
+              while [[ "$(adb shell getprop sys.boot_completed | tr -d '\r')" != "1" ]]; do
+                echo "⏳ Emulator is still booting..."
                 sleep 5
-                boot_completed=$(adb shell getprop sys.boot_completed | tr -d '\r')
-                echo "Waiting... sys.boot_completed=$boot_completed"
               done
               echo "✅ Emulator fully booted!"
               sleep 30
