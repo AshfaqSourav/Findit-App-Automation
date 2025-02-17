@@ -210,39 +210,31 @@ jobs:
             maven-${{ runner.os }}-
 
       - name: Install Appium & Dependencies
-        id: set-appium-path  # ✅ Set an ID to reference outputs
         run: |
-          npm uninstall -g appium || true
-          npm cache clean --force
-          npm install -g appium@latest
-          appium driver install uiautomator2
-      
-          # ✅ Find correct Appium path
-          APPIUM_PATH=$(npm root -g)/appium/build/lib/main.js
-          echo "Setting Appium Path..."
-      
-          # ✅ Check if Appium main.js exists
-          if [ ! -f "$APPIUM_PATH" ]; then
-          echo "❌ Appium main.js is missing! Reinstalling Appium..."
-          npm uninstall -g appium
-          npm install -g appium@latest
-          appium driver install uiautomator2
-          fi
-
-          # ✅ Fix permissions if required
-          sudo chmod +rx "$APPIUM_PATH"
-      
-          # ✅ Debugging Appium installation
-          echo "🔍 Checking Appium path and permissions..."
-          npm root -g
-          ls -la $(npm root -g)/appium/build/lib/
-      
-          # ✅ Persist Appium path across steps
-          echo "APPIUM_PATH=$APPIUM_PATH" >> $GITHUB_ENV
-          echo "export APPIUM_PATH=$APPIUM_PATH" >> $HOME/.bashrc
-          
-          appium -v
-          which appium
+            npm uninstall -g appium || true
+            npm cache clean --force
+            npm install -g appium@latest
+            appium driver install uiautomator2
+            
+            # ✅ Find correct Appium path
+            APPIUM_PATH=$(npm root -g)/appium/build/lib/main.js
+            
+            echo "🔍 Setting APPIUM_PATH..."
+            echo "APPIUM_PATH=$APPIUM_PATH" >> $GITHUB_ENV  # ✅ Persist across all steps
+            echo "export APPIUM_PATH=$APPIUM_PATH" >> $HOME/.bashrc  # ✅ Ensure it persists in shell
+            
+            echo "✅ Appium Main.js Path: $APPIUM_PATH"
+            
+            # ✅ Verify Appium main.js exists
+            if [ -f "$APPIUM_PATH" ]; then
+              echo "✅ Appium main.js found!"
+            else
+              echo "❌ Appium main.js is missing! Check installation."
+              exit 1
+            fi
+            
+            appium -v
+            which appium
 
       - name: Debug Appium Path
         run: |
