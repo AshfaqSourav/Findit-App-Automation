@@ -220,8 +220,8 @@ jobs:
             api-level: 30
             target: google_apis
             arch: x86_64
-            profile: pixel_4
-            ram-size: 8192M
+            profile: nexus_6p
+            ram-size: 6144M
             disk-size: 8G
             disable-animations: true
             no-window: true
@@ -231,19 +231,28 @@ jobs:
               adb wait-for-device
               echo "⏳ Waiting for emulator to fully boot..."
               
-              # Fix while-loop syntax issue
+              # Ensure ADB recognizes the emulator before proceeding
+              max_attempts=20
+              attempt=0
+              while [[ "$(adb devices | grep emulator-5554 | wc -l)" -eq 0 && $attempt -lt $max_attempts ]]; do
+                echo "🔄 Waiting for emulator to appear in 'adb devices' ($attempt/$max_attempts)..."
+                attempt=$((attempt+1))
+                sleep 5
+              done
+              
+              # Ensure the boot process is complete
               while [[ "$(adb shell getprop sys.boot_completed | tr -d '\r')" != "1" ]]; do
                 echo "🔄 Emulator still booting..."
-                sleep 10
+                sleep 5
               done
               
               echo "✅ Emulator fully booted!"
               sleep 30  # Give time for ADB to stabilize
               
-              # Ensure ADB connection is stable
+              # Restart ADB daemon to fix connection issues
               adb kill-server
               adb start-server
-              sleep 10
+              sleep 5
               
               adb devices
               adb shell input keyevent 82  # Unlock screen
