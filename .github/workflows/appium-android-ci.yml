@@ -183,10 +183,16 @@ jobs:
           npm cache clean --force
           npm install -g appium@latest
           appium driver install uiautomator2
+          
+           # Ensure correct Appium path is used
+          export APPIUM_PATH=$(npm root -g)/appium/build/lib/main.js
+          echo "Appium Main.js Path: $APPIUM_PATH"
+          ls -la $APPIUM_PATH || echo "❌ Appium main.js is missing!"
+          
           appium -v
           which appium
-          echo "Appium Root Path: $(npm root -g)"
-          ls -la $(npm root -g)/appium/build/lib/ || echo "❌ Appium main.js is missing!"
+#          echo "Appium Root Path: $(npm root -g)"
+#          ls -la $(npm root -g)/appium/build/lib/ || echo "❌ Appium main.js is missing!"
 
 #      - name: Start Appium Server
 #        run: |
