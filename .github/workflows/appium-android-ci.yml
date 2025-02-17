@@ -190,7 +190,7 @@ jobs:
 
       - name: Start Appium Server
         run: |
-          appium --base-path /wd/hub --log appium_server.log &
+          nohup appium --base-path /wd/hub --log appium_server.log &
           sleep 15
           if ! nc -z localhost 4723; then
             echo "❌ Appium server failed to start!"
@@ -224,11 +224,15 @@ jobs:
             echo "Waiting for emulator to boot..."
             adb shell getprop sys.boot_completed | grep -m 1 '1'
             echo "✅ Emulator is ready!"
+            nohup adb logcat > /dev/null 2>&1 &  # Keep emulator active
 
       - name: Keep Emulator Alive (Prevent Shutdown)
         run: |
           nohup adb shell input keyevent 82 &
           sleep 10
+
+      - name: Ensure Target Directory Exists
+        run: mkdir -p /home/runner/work/Findit-App/
 
       - name: Verify APK Existence
         run: |
