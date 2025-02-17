@@ -224,7 +224,9 @@ jobs:
             echo "export APPIUM_PATH=$APPIUM_PATH" >> $HOME/.bashrc  # ✅ Ensure it persists in shell
             
             echo "✅ Appium Main.js Path: $APPIUM_PATH"
-            
+            # ✅ Verify if Appium main.js exists & check permissions
+            ls -la $(npm root -g)/appium/build/lib/ 
+          
             # ✅ Verify Appium main.js exists
             if [ -f "$APPIUM_PATH" ]; then
               echo "✅ Appium main.js found!"
@@ -239,7 +241,11 @@ jobs:
       - name: Debug Appium Path
         run: |
           echo "🔍 Checking APPIUM_PATH: $APPIUM_PATH"
-          ls -la $APPIUM_PATH || echo "❌ File not found!"
+          if [ -z "$APPIUM_PATH" ]; then
+            echo "❌ APPIUM_PATH is not set! Failing job."
+            exit 1
+          fi
+          echo "✅ APPIUM_PATH is correctly set: $APPIUM_PATH"
           
 
   run-tests:
