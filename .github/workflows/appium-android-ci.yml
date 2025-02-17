@@ -291,7 +291,7 @@ jobs:
             adb shell getprop sys.boot_completed | grep -m 1 '1'
             echo "✅ Emulator is ready!"
             nohup adb logcat > /dev/null 2>&1 &  # Keep emulator active
-            nohup sleep 86400 > /dev/null 2>&1 &
+            tail -f /dev/null
 
       - name: Ensure Target Directory Exists
         run: mkdir -p /home/runner/work/Findit-App/
