@@ -287,36 +287,37 @@ jobs:
             adb wait-for-device
             adb shell input keyevent 82
             adb devices
+            mvn clean test
 #            echo "Waiting for emulator to boot..."
 #            adb shell getprop sys.boot_completed | grep -m 1 '1'
 #            echo "✅ Emulator is ready!"
 #            nohup adb logcat > /dev/null 2>&1 &  # Keep emulator active
 #             nohup sleep infinity &
 
-      - name: Ensure Target Directory Exists
-        run: mkdir -p /home/runner/work/Findit-App/
-
-      - name: Verify APK Existence
-        run: |
-          if [ -f src/test/resources/apps/V1.2.2.apk ]; then
-            echo "✅ APK found!"
-            cp src/test/resources/apps/V1.2.2.apk /home/runner/work/Findit-App/V1.2.2.apk
-          else
-            echo "❌ APK NOT FOUND!"
-            exit 1
-          fi
-
-      - name: Debug Environment Variables
-        run: printenv | grep APPIUM_PATH  # ✅ Ensure the variable is visible
-
-      - name: Run Mobile Tests
-        run: |
-          echo "🔄 Checking emulator status before running tests..."
-          adb wait-for-device
-          adb shell getprop sys.boot_completed | grep -m 1 '1'
-          echo "✅ Emulator is running, starting tests..."
-          mvn clean test
-        timeout-minutes: 30
+#      - name: Ensure Target Directory Exists
+#        run: mkdir -p /home/runner/work/Findit-App/
+#
+#      - name: Verify APK Existence
+#        run: |
+#          if [ -f src/test/resources/apps/V1.2.2.apk ]; then
+#            echo "✅ APK found!"
+#            cp src/test/resources/apps/V1.2.2.apk /home/runner/work/Findit-App/V1.2.2.apk
+#          else
+#            echo "❌ APK NOT FOUND!"
+#            exit 1
+#          fi
+#
+#      - name: Debug Environment Variables
+#        run: printenv | grep APPIUM_PATH  # ✅ Ensure the variable is visible
+#
+#      - name: Run Mobile Tests
+#        run: |
+#          echo "🔄 Checking emulator status before running tests..."
+#          adb wait-for-device
+#          adb shell getprop sys.boot_completed | grep -m 1 '1'
+#          echo "✅ Emulator is running, starting tests..."
+#          mvn clean test
+#        timeout-minutes: 30
 
       - name: Archive Test Results
         if: always()
