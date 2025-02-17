@@ -242,11 +242,14 @@ jobs:
 
       - name: Debug APPIUM_PATH Before Use
         run: |
+          echo "🔍 Checking APPIUM_PATH in ENV file..."
+          cat $GITHUB_ENV | grep APPIUM_PATH || echo "❌ APPIUM_PATH not found in ENV!"
           echo "🔍 Checking APPIUM_PATH: $APPIUM_PATH"
           if [ -z "$APPIUM_PATH" ]; then
             echo "❌ APPIUM_PATH is not set! Failing job."
             exit 1
           fi
+      
       
 
       - name: Debug Appium Path
