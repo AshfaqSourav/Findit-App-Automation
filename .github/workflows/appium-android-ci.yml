@@ -287,6 +287,7 @@ jobs:
           if [ -f src/test/resources/apps/V1.2.2.apk ]; then
             echo "✅ APK found!"
             file src/test/resources/apps/V1.2.2.apk  # Check if it's a valid APK
+            unzip -t src/test/resources/apps/V1.2.2.apk || echo "❌ APK is corrupted!"
             else
             echo "❌ APK NOT FOUND!"
             exit 1
@@ -307,6 +308,7 @@ jobs:
             adb wait-for-device
             adb shell input keyevent 82
             adb devices
+            adb shell getprop ro.build.version.release
             mvn clean test
 #            echo "Waiting for emulator to boot..."
 #            adb shell getprop sys.boot_completed | grep -m 1 '1'
