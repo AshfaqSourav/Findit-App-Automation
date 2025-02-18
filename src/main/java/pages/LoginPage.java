@@ -19,7 +19,7 @@ public class LoginPage extends BasePage {
         System.out.println("visible continue with email");
         this.clickButton("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         System.out.println("Clicked continue with email");
-        waitForVisibilityOfElement("LOGIN_EMAIL_TEXT", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,20);
+        waitForVisibilityOfElement("LOGIN_EMAIL_TEXT", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
         System.out.println("visible txt");
         this.clickTextField("LOGIN_EMAIL_TEXT", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH, email);
         System.out.println("Email Entered");
