@@ -133,42 +133,85 @@ jobs:
           ls -lah /home/runner/work/Findit-App/V1.2.2.apk
           file /home/runner/work/Findit-App/V1.2.2.apk
 
-      - name: Start Android Emulator (API 30)
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 31
-          target: google_apis
-          arch: x86_64
-          Hardware profile: Pixel_6
-          disk-size: 10G
-          RAM size: 4096M  # ✅ Increased RAM
-          Heap size: 1024M
-          avd-name: Pixel_6
-          script: |
-            adb wait-for-device
-            echo "📏 Screen Resolution:"
-            adb shell wm size
-            echo "📏 Screen Density:"
-            adb shell wm density
-            echo "📱 Device Model:"
-            adb shell getprop ro.product.model
-            echo "🏭 Device Brand:"
-            adb shell getprop ro.product.brand
-            echo "📱 Android Version:"
-            adb shell getprop ro.build.version.release
-            echo "🔢 API Level:"
-            adb shell getprop ro.build.version.sdk
-            adb shell input keyevent 82
-            adb shell wm size 1080x2400  # ✅ Force high resolution
-            adb shell wm density 537
-             echo "📏 Screen Resolution:"
-            adb shell wm size
-            echo "📏 Screen Density:"
-            adb shell wm density
-            uname -m
-            adb devices
-            adb shell getprop ro.build.version.release
-            mvn clean test
+#      - name: Start Android Emulator (API 30)
+#        uses: reactivecircus/android-emulator-runner@v2
+#        with:
+#          api-level: 31
+#          target: google_apis
+#          arch: x86_64
+#          Hardware profile: Pixel_6
+#          disk-size: 10G
+#          RAM size: 4096M  # ✅ Increased RAM
+#          Heap size: 1024M
+#          avd-name: Pixel_6
+#          script: |
+#            adb wait-for-device
+#            echo "📏 Screen Resolution:"
+#            adb shell wm size
+#            echo "📏 Screen Density:"
+#            adb shell wm density
+#            echo "📱 Device Model:"
+#            adb shell getprop ro.product.model
+#            echo "🏭 Device Brand:"
+#            adb shell getprop ro.product.brand
+#            echo "📱 Android Version:"
+#            adb shell getprop ro.build.version.release
+#            echo "🔢 API Level:"
+#            adb shell getprop ro.build.version.sdk
+#            adb shell input keyevent 82
+#            adb shell wm size 1080x2400  # ✅ Force high resolution
+#            adb shell wm density 537
+#             echo "📏 Screen Resolution:"
+#            adb shell wm size
+#            echo "📏 Screen Density:"
+#            adb shell wm density
+#            uname -m
+#            adb devices
+#            adb shell getprop ro.build.version.release
+#            mvn clean test
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Accept Android SDK Licenses
+        run: yes | sdkmanager --licenses
+
+      - name: Install Required Android Packages
+        run: |
+          sdkmanager "platform-tools" "platforms;android-30" "system-images;android-30;google_apis;x86_64" "emulator"
+
+      - name: Create and Start Emulator
+        run: |
+          echo "🛠 Creating AVD for Pixel 6 API 30..."
+          echo "no" | avdmanager create avd -n Pixel_6_API_30 -k "system-images;android-30;google_apis;x86_64" --device "pixel_6"
+                
+          echo "🚀 Starting Emulator..."
+          nohup $ANDROID_HOME/emulator/emulator -avd Pixel_6_API_30 -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim &
+          sleep 60  # Wait for emulator to boot
+                
+          echo "🔄 Waiting for Device..."
+          adb wait-for-device
+                
+          echo "📏 Disabling Animations"
+          adb shell settings put global window_animation_scale 0
+          adb shell settings put global transition_animation_scale 0
+          adb shell settings put global animator_duration_scale 0
+                
+          echo "📏 Default Screen Resolution:"
+          adb shell wm size
+                
+          echo "📏 Forcing High Resolution"
+          adb shell wm size 1080x2400
+          adb shell wm density 537
+                
+          echo "📏 Updated Screen Resolution:"
+          adb shell wm size
+          adb shell wm density
+                
+          echo "📱 Device Info:"
+          adb shell getprop ro.product.model
+          adb shell getprop ro.product.brand
+          adb shell getprop ro.build.version.release
+          mvn clean test
 
       - name: Load test report history
         uses: actions/checkout@v3
