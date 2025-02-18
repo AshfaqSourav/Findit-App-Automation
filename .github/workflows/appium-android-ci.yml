@@ -312,6 +312,18 @@ jobs:
           avd-name: pixel_3a
           script: |
             adb wait-for-device
+            echo "📏 Screen Resolution:"
+            adb shell wm size
+            echo "📏 Screen Density:"
+            adb shell wm density
+            echo "📱 Device Model:"
+            adb shell getprop ro.product.model
+            echo "🏭 Device Brand:"
+            adb shell getprop ro.product.brand
+            echo "📱 Android Version:"
+            adb shell getprop ro.build.version.release
+            echo "🔢 API Level:"
+            adb shell getprop ro.build.version.sdk
             adb shell input keyevent 82
             adb devices
             adb shell getprop ro.build.version.release
