@@ -78,8 +78,8 @@ jobs:
             echo "❌ APPIUM_PATH is not set! Failing job."
             exit 1
           fi
-      
-      
+
+
 
       - name: Debug Appium Path
         run: |
@@ -155,10 +155,10 @@ jobs:
           else
           echo "✅ AVD already exists, skipping creation."
           fi
-  
+          
           echo "📋 Available AVDs:"
           avdmanager list avd
-                
+          
           echo "🚀 Starting Emulator..."
           export ANDROID_EMULATOR_HOME=$HOME/.android 
           nohup $ANDROID_HOME/emulator/emulator -avd Pixel_6_API_30 -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim &
@@ -166,27 +166,27 @@ jobs:
           
           echo "🕒 Waiting for emulator to boot..."
           sleep 60  # Wait for boot
-  
+          
           echo "🔄 Verifying Emulator Status..."
           adb wait-for-device
           adb shell getprop sys.boot_completed | grep -m 1 '1'
-                
+          
           echo "📏 Disabling Animations"
           adb shell settings put global window_animation_scale 0
           adb shell settings put global transition_animation_scale 0
           adb shell settings put global animator_duration_scale 0
-                
+          
           echo "📏 Default Screen Resolution:"
           adb shell wm size
-                
+          
           echo "📏 Forcing High Resolution"
           adb shell wm size 1080x2400
           adb shell wm density 537
-                
+          
           echo "📏 Updated Screen Resolution:"
           adb shell wm size
           adb shell wm density
-                
+          
           echo "📱 Device Info:"
           adb shell getprop ro.product.model
           adb shell getprop ro.product.brand
@@ -209,10 +209,6 @@ jobs:
           allure_history: allure-history
           allure_results: allure-results
 
-      - name: Ensure gh-pages branch exists
-        run: |
-          git fetch origin gh-pages || git checkout --orphan gh-pages
-          git push origin gh-pages
 
       - name: Publish test report
         uses: peaceiris/actions-gh-pages@v3
