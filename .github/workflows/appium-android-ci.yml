@@ -276,17 +276,27 @@ jobs:
             echo "❌ APPIUM_PATH is not set! Failing job."
             exit 1
           fi
+
       - name: Ensure Target Directory Exists
-        run: mkdir -p /home/runner/work/Findit-App/
+        run: |
+          mkdir -p /home/runner/work/Findit-App/
+          cp src/test/resources/apps/V1.2.2.apk /home/runner/work/Findit-App/V1.2.2.apk
+
       - name: Verify APK Existence
         run: |
           if [ -f src/test/resources/apps/V1.2.2.apk ]; then
             echo "✅ APK found!"
-            cp src/test/resources/apps/V1.2.2.apk /home/runner/work/Findit-App/V1.2.2.apk
+            file src/test/resources/apps/V1.2.2.apk  # Check if it's a valid APK
             else
             echo "❌ APK NOT FOUND!"
             exit 1
             fi
+
+      - name: Debug APK Path and Permissions
+        run: |
+          ls -lah /home/runner/work/Findit-App/V1.2.2.apk
+          file /home/runner/work/Findit-App/V1.2.2.apk
+
       - name: Start Android Emulator (API 30)
         uses: reactivecircus/android-emulator-runner@v2
         with:
