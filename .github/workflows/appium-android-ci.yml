@@ -315,35 +315,37 @@ jobs:
             adb devices
             adb shell getprop ro.build.version.release
             mvn clean test
-#            echo "Waiting for emulator to boot..."
-#            adb shell getprop sys.boot_completed | grep -m 1 '1'
-#            echo "✅ Emulator is ready!"
-#            nohup adb logcat > /dev/null 2>&1 &  # Keep emulator active
-#             nohup sleep infinity &
 
-#      - name: Ensure Target Directory Exists
-#        run: mkdir -p /home/runner/work/Findit-App/
-#
-
-#
-#      - name: Debug Environment Variables
-#        run: printenv | grep APPIUM_PATH  # ✅ Ensure the variable is visible
-#
-#      - name: Run Mobile Tests
-#        run: |
-#          echo "🔄 Checking emulator status before running tests..."
-#          adb wait-for-device
-#          adb shell getprop sys.boot_completed | grep -m 1 '1'
-#          echo "✅ Emulator is running, starting tests..."
-#          mvn clean test
-#        timeout-minutes: 30
-
-      - name: Archive Test Results
+      - name: Load test report history
+        uses: actions/checkout@v3
         if: always()
-        uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
-          name: allure-results
-          path: allure-results
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Build test report
+        uses: simple-elf/allure-report-action@v1.7
+        if: always()
+        with:
+          gh_pages: gh-pages
+          allure_history: allure-history
+          allure_results: allure-results
+
+      - name: Publish test report
+        uses: peaceiris/actions-gh-pages@v3
+        if: always()
+        with:
+          github_token: ${{ secrets.TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: allure-history
+
+#      - name: Archive Test Results
+#        if: always()
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: allure-results
+#          path: allure-results
 
 #  run-tests:
 #    needs: setup-environment

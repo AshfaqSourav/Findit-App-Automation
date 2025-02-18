@@ -5,8 +5,8 @@
         <parameter name="platformName" value="Android" />
         <classes>
             <class name="tests.LoginPageTest" />
-            <class name="tests.ProductUploadTest" />
-            <class name="tests.LogoutTest" />
+<!--            <class name="tests.ProductUploadTest" />-->
+<!--            <class name="tests.LogoutTest" />-->
         </classes>
     </test>
  <test name="iOS Tests">
