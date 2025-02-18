@@ -2,7 +2,7 @@ package locators.androidLocators;
 
 public class LoginPageLocatorsAndroid {
     public static final String LOGIN_WITH_EMAIL_BUTTON = "//android.widget.ImageView[@content-desc=\"Continue with Email\" or @content-desc=\"Lanjutkan dengan Email\"]";
-    public static final String LOGIN_EMAIL_TEXT = "//android.widget.EditText[@index='4']";
+    public static final String LOGIN_EMAIL_TEXT = "//android.widget.EditText";
     public static final String LOGIN_EMAIL_NEXT_BUTTON = "//android.widget.Button[@content-desc=\"Lanjutkan\" or @content-desc=\"Next\"]";
     public static final String LOGIN_EMAIL_OTP_2 = "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View[2]/android.view.View[4]/android.widget.EditText[2]";
     public static final String LOGIN_EMAIL_OTP_3 = "//android.widget.FrameLayout[@resource-id=\"android:id/content\"]/android.widget.FrameLayout/android.view.View/android.view.View/android.view.View/android.view.View[2]/android.view.View[4]/android.widget.EditText[3]";
