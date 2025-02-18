@@ -28,6 +28,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - name: Install Allure CLI
+        run: |
+            echo "📦 Installing Allure CLI..."
+            sudo apt update
+            sudo apt install -y allure  # ✅ Install Allure on the runner
 
       - name: Cache Maven Dependencies
         id: cache-dependencies
@@ -191,7 +196,6 @@ jobs:
           adb shell getprop ro.product.model
           adb shell getprop ro.product.brand
           adb shell getprop ro.build.version.release
-          mvn clean test 
           
 
       - name: Load Test Report History
