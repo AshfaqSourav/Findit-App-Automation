@@ -30,8 +30,6 @@ replay_pid*
 target/
 test-output
 
-allure-report
-allure-results
 
 #appium server log
 appium_server_logs.txt
