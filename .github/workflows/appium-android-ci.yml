@@ -182,14 +182,29 @@ jobs:
       - name: Create and Start Emulator
         run: |
           echo "🛠 Creating AVD for Pixel 6 API 30..."
-          echo "no" | avdmanager create avd -n Pixel_6_API_30 -k "system-images;android-30;google_apis;x86_64" --device "pixel_6"
+          AVD_NAME="Pixel_6_API_30"
+          
+          # Check if AVD already exists
+          if [ ! -d "$HOME/.android/avd/$AVD_NAME.avd" ]; then
+          echo "⚡ AVD not found, creating new one..."
+          echo "no" | avdmanager create avd -n $AVD_NAME -k "system-images;android-30;google_apis;x86_64" --device "pixel_6"
+          else
+          echo "✅ AVD already exists, skipping creation."
+          fi
+  
+          echo "📋 Available AVDs:"
+          avdmanager list avd
                 
           echo "🚀 Starting Emulator..."
           nohup $ANDROID_HOME/emulator/emulator -avd Pixel_6_API_30 -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim &
           sleep 60  # Wait for emulator to boot
-                
-          echo "🔄 Waiting for Device..."
+          
+          echo "🕒 Waiting for emulator to boot..."
+          sleep 60  # Wait for boot
+  
+          echo "🔄 Verifying Emulator Status..."
           adb wait-for-device
+          adb shell getprop sys.boot_completed | grep -m 1 '1'
                 
           echo "📏 Disabling Animations"
           adb shell settings put global window_animation_scale 0
