@@ -209,6 +209,11 @@ jobs:
           allure_history: allure-history
           allure_results: allure-results
 
+      - name: Ensure gh-pages branch exists
+        run: |
+          git fetch origin gh-pages || git checkout --orphan gh-pages
+          git push origin gh-pages
+
       - name: Publish test report
         uses: peaceiris/actions-gh-pages@v3
         if: always()
