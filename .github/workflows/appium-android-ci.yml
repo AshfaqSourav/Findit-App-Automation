@@ -295,6 +295,7 @@ jobs:
             adb wait-for-device
             adb shell input keyevent 82
             adb devices
+            cp src/test/resources/apps/V1.2.2.apk /home/runner/work/Findit-App/V1.2.2.apk
             mvn clean test
 #            echo "Waiting for emulator to boot..."
 #            adb shell getprop sys.boot_completed | grep -m 1 '1'
