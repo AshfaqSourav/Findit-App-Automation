@@ -28,11 +28,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Install Allure CLI
-        run: |
-            echo "📦 Installing Allure CLI..."
-            sudo apt update
-            sudo apt install -y allure  # ✅ Install Allure on the runner
 
       - name: Cache Maven Dependencies
         id: cache-dependencies
@@ -211,6 +206,11 @@ jobs:
           echo "🧹 Cleaning previous Allure results..."
           rm -rf allure-results allure-report allure-history || true
           mkdir -p allure-results allure-report allure-history  # ✅ Ensure fresh directories exist
+      - name: Install Allure CLI
+        run: |
+          echo "📦 Installing Allure CLI..."
+          sudo apt update
+          sudo apt install -y allure  # ✅ Install Allure on the runner
 
       - name: Run Tests & Collect New Allure Results
         run: |
