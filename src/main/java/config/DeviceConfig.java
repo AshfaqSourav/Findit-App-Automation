@@ -76,7 +76,7 @@ public class DeviceConfig {
         capabilities.setCapability("appium:app", apkPath);
         capabilities.setCapability("appium:noReset", false);
         capabilities.setCapability("appium:fullReset", true);
-        capabilities.setCapability("appium:unicodeKeyboard", true);
+        capabilities.setCapability("appium:hideKeyboard", true);
         capabilities.setCapability("appium:autoGrantPermissions", true);
         return capabilities;
     }
