@@ -231,7 +231,7 @@ jobs:
           adb shell getprop ro.product.model
           adb shell getprop ro.product.brand
           adb shell getprop ro.build.version.release
-          mvn test -Dsurefire.suiteXmlFiles=src/test/resources/testing.xml
+          mvn clean test 
 
       - name: Load test report history
         uses: actions/checkout@v3
