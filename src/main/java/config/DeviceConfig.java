@@ -57,8 +57,8 @@ public class DeviceConfig {
     public static DesiredCapabilities getAndroidCapabilities() {
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability("appium:platformName", properties.getProperty("platformName"));
-        capabilities.setCapability("appium:deviceName", properties.getProperty("deviceName"));
-        capabilities.setCapability("appium:udid", properties.getProperty("udid"));
+//        capabilities.setCapability("appium:deviceName", properties.getProperty("deviceName"));
+//        capabilities.setCapability("appium:udid", properties.getProperty("udid"));
         capabilities.setCapability("appium:platformVersion", properties.getProperty("platformVersion"));
         capabilities.setCapability("appium:automationName", properties.getProperty("automationName"));
         capabilities.setCapability("appium:newCommandTimeout", Integer.parseInt(properties.getProperty("newCommandTimeout")));
