@@ -309,6 +309,9 @@ jobs:
           api-level: 30
           target: google_apis
           arch: x86_64
+          Hardware profile: pixel_3a
+          RAM size: 2048M  # ✅ Increased RAM
+          Heap size: 512M
           avd-name: pixel_3a
           script: |
             adb wait-for-device
