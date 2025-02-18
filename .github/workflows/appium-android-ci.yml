@@ -276,15 +276,17 @@ jobs:
             echo "❌ APPIUM_PATH is not set! Failing job."
             exit 1
           fi
-#      - name: Verify APK Existence
-#        run: |
-#          if [ -f src/test/resources/apps/V1.2.2.apk ]; then
-#            echo "✅ APK found!"
-#            cp src/test/resources/apps/V1.2.2.apk /home/runner/work/Findit-App/V1.2.2.apk
-#            else
-#            echo "❌ APK NOT FOUND!"
-#            exit 1
-#            fi
+      - name: Ensure Target Directory Exists
+        run: mkdir -p /home/runner/work/Findit-App/
+      - name: Verify APK Existence
+        run: |
+          if [ -f src/test/resources/apps/V1.2.2.apk ]; then
+            echo "✅ APK found!"
+            cp src/test/resources/apps/V1.2.2.apk /home/runner/work/Findit-App/V1.2.2.apk
+            else
+            echo "❌ APK NOT FOUND!"
+            exit 1
+            fi
       - name: Start Android Emulator (API 30)
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -295,7 +297,7 @@ jobs:
             adb wait-for-device
             adb shell input keyevent 82
             adb devices
-            cp src/test/resources/apps/V1.2.2.apk /home/runner/work/Findit-App/V1.2.2.apk
+#            cp src/test/resources/apps/V1.2.2.apk /home/runner/work/Findit-App/V1.2.2.apk
             mvn clean test
 #            echo "Waiting for emulator to boot..."
 #            adb shell getprop sys.boot_completed | grep -m 1 '1'
