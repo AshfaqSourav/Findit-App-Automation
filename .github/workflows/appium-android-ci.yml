@@ -182,11 +182,15 @@ jobs:
       - name: Create and Start Emulator
         run: |
           echo "🛠 Creating AVD for Pixel 6 API 30..."
+          export ANDROID_AVD_HOME=$HOME/.android/avd  # ✅ Force correct AVD path
+          
           AVD_NAME="Pixel_6_API_30"
+          
           
           # Check if AVD already exists
           if [ ! -d "$HOME/.android/avd/$AVD_NAME.avd" ]; then
           echo "⚡ AVD not found, creating new one..."
+          mkdir -p $ANDROID_AVD_HOME 
           echo "no" | avdmanager create avd -n $AVD_NAME -k "system-images;android-30;google_apis;x86_64" --device "pixel_6"
           else
           echo "✅ AVD already exists, skipping creation."
@@ -196,6 +200,7 @@ jobs:
           avdmanager list avd
                 
           echo "🚀 Starting Emulator..."
+          export ANDROID_EMULATOR_HOME=$HOME/.android 
           nohup $ANDROID_HOME/emulator/emulator -avd Pixel_6_API_30 -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim &
           sleep 60  # Wait for emulator to boot
           
