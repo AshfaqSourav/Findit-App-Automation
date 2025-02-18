@@ -286,6 +286,7 @@ jobs:
         run: |
           mkdir -p /home/runner/work/Findit-App/
           cp src/test/resources/apps/V1.2.2.apk /home/runner/work/Findit-App/V1.2.2.apk
+          uname -m
 
       - name: Verify APK Existence
         run: |
@@ -314,7 +315,6 @@ jobs:
           RAM size: 4096M  # ✅ Increased RAM
           Heap size: 1024M
           avd-name: Pixel_6
-          emulator-boot-timeout: 600000
           script: |
             adb wait-for-device
             echo "📏 Screen Resolution:"
@@ -336,6 +336,7 @@ jobs:
             adb shell wm size
             echo "📏 Screen Density:"
             adb shell wm density
+            uname -m
             adb devices
             adb shell getprop ro.build.version.release
             mvn clean test
