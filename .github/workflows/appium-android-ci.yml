@@ -328,6 +328,8 @@ jobs:
             echo "🔢 API Level:"
             adb shell getprop ro.build.version.sdk
             adb shell input keyevent 82
+            adb shell wm size 1080x1920  # ✅ Force high resolution
+            adb shell wm density 420
             adb devices
             adb shell getprop ro.build.version.release
             mvn clean test
