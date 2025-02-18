@@ -59,7 +59,7 @@ public class DeviceConfig {
         capabilities.setCapability("appium:platformName", properties.getProperty("platformName"));
 //        capabilities.setCapability("appium:deviceName", properties.getProperty("deviceName"));
 //        capabilities.setCapability("appium:udid", properties.getProperty("udid"));
-        capabilities.setCapability("appium:platformVersion", properties.getProperty("platformVersion"));
+//        capabilities.setCapability("appium:platformVersion", properties.getProperty("platformVersion"));
         capabilities.setCapability("appium:automationName", properties.getProperty("automationName"));
         capabilities.setCapability("appium:newCommandTimeout", Integer.parseInt(properties.getProperty("newCommandTimeout")));
 //        capabilities.setCapability("appium:app", System.getProperty("user.dir") + "/" + properties.getProperty("appPath"));

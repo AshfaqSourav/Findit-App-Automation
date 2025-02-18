@@ -300,7 +300,7 @@ jobs:
       - name: Start Android Emulator (API 30)
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 25
+          api-level: 30
           target: google_apis
           arch: x86_64
           script: |
