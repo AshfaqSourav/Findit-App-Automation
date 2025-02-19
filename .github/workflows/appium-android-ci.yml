@@ -306,10 +306,24 @@ jobs:
           echo "📦 Installing Allure CLI..."
           sudo apt update
           sudo apt install -y curl unzip
-          curl -o allure.tgz -OL https://github.com/allure-framework/allure2/releases/latest/download/allure-2.24.0.tgz
-          tar -zxvf allure.tgz -C /opt/
+            
+          # ✅ Download a fixed version instead of latest
+          echo "📥 Downloading Allure (Fixed Version)..."
+          curl -L -o allure.tgz https://github.com/allure-framework/allure2/releases/download/2.24.0/allure-2.24.0.tgz
+            
+          echo "📂 Extracting Allure..."
+          tar -zxvf allure.tgz -C /opt/ || { echo "❌ Extraction failed!"; exit 1; }
+            
+          echo "🔗 Creating Symlink for Allure..."
           sudo ln -s /opt/allure-2.24.0/bin/allure /usr/local/bin/allure
+            
           echo "✅ Installed Allure CLI Version: $(allure --version)"
+
+      - name: Debug Allure Download
+        run: |
+          echo "🔍 Checking Allure Tarball..."
+          ls -lah allure.tgz
+          file allure.tgz  # Should print "gzip compressed data"
 
       - name: Load Previous Test Report History (gh-pages)
         uses: actions/checkout@v4
