@@ -566,6 +566,6 @@ jobs:
                 echo "No summary found. Check if tests executed correctly." > summary.txt
               fi
 
-            - name: Send Email with Allure Report (ZIP)
-              run: |
-                mailx -s "Allure Test Summary" -A allure-report.zip ashfaq.ahmed@findit.id < summary.txt
+      - name: Send Email with Allure Report (ZIP)
+        run: |
+          mailx -s "Allure Test Summary" -A allure-report.zip ashfaq.ahmed@findit.id < summary.txt
