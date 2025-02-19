@@ -571,7 +571,10 @@ jobs:
       - name: Compress Allure Report
         run: zip -r allure-report.txt allure-report
 
+      - name: Extract Key Test Summary
+        run: |
+          grep "Test Summary" allure-report/index.html > summary.txt  # Extract key results
+
       - name: Send Email with Allure Report (ZIP)
         run: |
-          echo "Hello, please find the attached Allure test report in ZIP format.Install node.js then run this command npx http-server allure-report -p 8080 .Then open unzip the file and open index.html file" | mailx -s "Allure Test Report" -A allure-report.txt ashfaq.ahmed@findit.id
-
+          cat summary.txt | mailx -s "Allure Test Summary" -A allure-report.txt ashfaq.ahmed@findit.id
