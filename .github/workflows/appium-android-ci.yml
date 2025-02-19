@@ -260,7 +260,10 @@ jobs:
           echo "set smtp-auth-password=${{ secrets.SMTP_PASSWORD }}" >> ~/.mailrc
           echo "set ssl-verify=ignore" >> ~/.mailrc
 
-      - name: Send Email with Allure Report
+      - name: Compress Allure Report
+        run: zip -r allure-report.zip allure-report
+
+      - name: Send Email with Allure Report (ZIP)
         run: |
-          echo "Hello, please find the attached Allure test report." | mailx -s "Allure Test Report" -A allure-report/index.html ashfaq.ahmed@findit.id
+          echo "Hello, please find the attached Allure test report in ZIP format.Install node.js then run this command npx http-server allure-report -p 8080 .Then open unzip the file and open index.html file" | mailx -s "Allure Test Report" -A allure-report.zip ashfaq.ahmed@findit.id
 
