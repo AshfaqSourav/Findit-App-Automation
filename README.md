@@ -1,11 +1,12 @@
-# FINDIT-test
+# FINDIT-AUTOMATION
 ### ui-test-with-java-appium
 This project is done to do UI testing of an android flutter app.
 
 ### Prerequisites and set-up:
 To run the project, you’ll need to ensure following prerequisites as shown below:
+Android Setup & ios setup both can be set by following the video--
 
-    https://www.notion.so/easabbir/Setup-for-Running-Mobile-Automation-b49abf574b9247c6891a36050818af09
+https://www.youtube.com/playlist?list=PLhW3qG5bs-L8BQaqLpjt5792e8om6IR3k
 
 ---
 

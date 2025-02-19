@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  setup-enviroment-run-tests-generate-report:
+  build:
     runs-on: ubuntu-latest
     outputs:
       appium_path: ${{ steps.set-appium-path.outputs.appium_path }}  # ✅ Pass APPIUM_PATH between jobs
@@ -248,3 +248,19 @@ jobs:
           github_token: ${{ secrets.TOKEN }}
           publish_branch: gh-pages
           publish_dir: allure-report  # ✅ Upload only Allure reports, not entire repo
+
+      - name: Install mailx
+        run: sudo apt-get install -y mailutils
+
+      - name: Configure mailx for SMTP
+        run: |
+          echo "set smtp=smtps://smtp.gmail.com:465" >> ~/.mailrc
+          echo "set smtp-auth=login" >> ~/.mailrc
+          echo "set smtp-auth-user=${{ secrets.SMTP_USERNAME }}" >> ~/.mailrc
+          echo "set smtp-auth-password=${{ secrets.SMTP_PASSWORD }}" >> ~/.mailrc
+          echo "set ssl-verify=ignore" >> ~/.mailrc
+
+      - name: Send Email with Allure Report
+        run: |
+          echo "Hello, please find the attached Allure test report." | mailx -s "Allure Test Report" -A allure-report/index.html ashfaq.ahmed@findit.id
+
