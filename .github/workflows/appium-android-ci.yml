@@ -494,8 +494,8 @@ jobs:
           nohup $ANDROID_HOME/emulator/emulator -avd Pixel_6_API_30 -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim &
           sleep 60  # Wait for emulator to boot
 
-          echo "🕒 Waiting for emulator to boot..."
-          sleep 60  # Wait for boot
+#          echo "🕒 Waiting for emulator to boot..."
+#          sleep 60  # Wait for boot
 
           echo "🔄 Verifying Emulator Status..."
           adb wait-for-device
@@ -506,21 +506,21 @@ jobs:
           adb shell settings put global transition_animation_scale 0
           adb shell settings put global animator_duration_scale 0
 
-          echo "📏 Default Screen Resolution:"
-          adb shell wm size
-
-          echo "📏 Forcing High Resolution"
-          adb shell wm size 1080x2400
-          adb shell wm density 537
-
-          echo "📏 Updated Screen Resolution:"
-          adb shell wm size
-          adb shell wm density
-
-          echo "📱 Device Info:"
-          adb shell getprop ro.product.model
-          adb shell getprop ro.product.brand
-          adb shell getprop ro.build.version.release
+#          echo "📏 Default Screen Resolution:"
+#          adb shell wm size
+#
+#          echo "📏 Forcing High Resolution"
+#          adb shell wm size 1080x2400
+#          adb shell wm density 537
+#
+#          echo "📏 Updated Screen Resolution:"
+#          adb shell wm size
+#          adb shell wm density
+#
+#          echo "📱 Device Info:"
+#          adb shell getprop ro.product.model
+#          adb shell getprop ro.product.brand
+#          adb shell getprop ro.build.version.release
 
       - name: Clear Previous Allure Results
         run: |
@@ -573,7 +573,7 @@ jobs:
 
       - name: Extract Key Test Summary
         run: |
-          grep "Test Summary" allure-report/index.html > summary.txt  # Extract key results
+          grep -E '"total"|"passed"|"failed"|"skipped"' allure-report/widgets/summary.json > summary.txt
 
       - name: Send Email with Allure Report (ZIP)
         run: |
