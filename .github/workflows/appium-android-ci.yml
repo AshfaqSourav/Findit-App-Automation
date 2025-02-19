@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  setup-environment:
+  setup-enviroment-run-tests-generate-report:
     runs-on: ubuntu-latest
     outputs:
       appium_path: ${{ steps.set-appium-path.outputs.appium_path }}  # ✅ Pass APPIUM_PATH between jobs
@@ -237,7 +237,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Report
+          name: allure-report
           path: allure-report  # ✅ Save generated test reports
           retention-days: 7
 
@@ -247,4 +247,4 @@ jobs:
         with:
           github_token: ${{ secrets.TOKEN }}
           publish_branch: gh-pages
-          publish_dir: Report  # ✅ Upload only Allure reports, not entire repo
+          publish_dir: allure-report  # ✅ Upload only Allure reports, not entire repo
