@@ -397,6 +397,11 @@ jobs:
           adb shell getprop ro.product.brand
           adb shell getprop ro.build.version.release
 
+      - name: Run Tests & Collect New Allure Results
+        run: |
+          echo "🛠 Running Tests..."
+          mvn clean test  # ✅ Run tests and generate new allure-results
+
       - name: Store Allure Results (for CI Debugging)
         uses: actions/upload-artifact@v4
         if: always()
