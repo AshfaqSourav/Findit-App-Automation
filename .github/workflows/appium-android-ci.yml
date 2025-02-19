@@ -290,6 +290,11 @@ jobs:
           appium driver install uiautomator2
           echo "✅ Installed Appium: $(appium -v)"
           which appium
+      - name: Enable KVM (Better Placement)
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
