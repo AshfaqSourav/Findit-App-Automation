@@ -1,3 +1,272 @@
+#name: Run Android Tests in GitHub Runner
+#
+#on:
+#  push:
+#    branches:
+#      - main
+#
+#jobs:
+#  build:
+#    runs-on: ubuntu-latest
+#    outputs:
+#      appium_path: ${{ steps.set-appium-path.outputs.appium_path }}  # ✅ Pass APPIUM_PATH between jobs
+#    steps:
+#      - name: Checkout Repository
+#        uses: actions/checkout@v4
+#
+#      - name: Setup Java
+#        uses: actions/setup-java@v3
+#        with:
+#          distribution: 'temurin'
+#          java-version: '17'
+#          cache: 'maven'
+#
+#      - name: Verify Java Version
+#        run: java -version
+#
+#      - name: Setup NodeJS
+#        uses: actions/setup-node@v4
+#        with:
+#          node-version: '20'
+#
+#      - name: Cache Maven Dependencies
+#        id: cache-dependencies
+#        uses: actions/cache@v3
+#        with:
+#          path: ~/.m2
+#          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+#          restore-keys: |
+#            maven-${{ runner.os }}-
+#
+#      - name: Install Appium & Dependencies
+#        run: |
+#          npm uninstall -g appium || true
+#          npm cache clean --force
+#          npm install -g appium@latest
+#          appium driver install uiautomator2
+#
+#          # ✅ Set and persist APPIUM_PATH correctly
+#          export APPIUM_PATH=$(npm root -g)/appium/build/lib/main.js
+#
+#          echo "🔍 Setting APPIUM_PATH..."
+#          echo "APPIUM_PATH=$APPIUM_PATH" >> $GITHUB_ENV  # ✅ Persist across workflow steps
+#          echo "export APPIUM_PATH=$APPIUM_PATH" >> $HOME/.bashrc  # ✅ Ensure persistence in shell
+#
+#          echo "✅ Appium Main.js Path: $APPIUM_PATH"
+#
+#          # ✅ Debug: Verify the path exists
+#          ls -la $(npm root -g)/appium/build/lib/
+#
+#          # ✅ Fix permissions for Appium main.js
+#          if [ -f "$APPIUM_PATH" ]; then
+#            sudo chmod +rx "$APPIUM_PATH"  # ✅ Ensure it's readable & executable
+#            echo "✅ Fixed permissions for Appium main.js"
+#          else
+#            echo "❌ Appium main.js is missing! Check installation."
+#            exit 1
+#          fi
+#
+#          appium -v
+#          which appium
+#
+#      - name: Debug APPIUM_PATH Before Use
+#        run: |
+#          echo "🔍 Checking APPIUM_PATH in ENV file..."
+#          cat $GITHUB_ENV | grep APPIUM_PATH || echo "❌ APPIUM_PATH not found in ENV!"
+#          echo "🔍 Checking APPIUM_PATH: $APPIUM_PATH"
+#          if [ -z "$APPIUM_PATH" ]; then
+#            echo "❌ APPIUM_PATH is not set! Failing job."
+#            exit 1
+#          fi
+#
+#
+#
+#      - name: Debug Appium Path
+#        run: |
+#          echo "🔍 Checking APPIUM_PATH: $APPIUM_PATH"
+#          if [ -z "$APPIUM_PATH" ]; then
+#            echo "❌ APPIUM_PATH is not set! Failing job."
+#            exit 1
+#          fi
+#          echo "✅ APPIUM_PATH is correctly set: $APPIUM_PATH"
+#      - name: Checkout Repository
+#        uses: actions/checkout@v4
+#
+#      - name: Enable KVM (Better Placement)
+#        run: |
+#          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+#          sudo udevadm control --reload-rules
+#          sudo udevadm trigger --name-match=kvm
+#
+#      - name: Debug APPIUM_PATH Before Use  # ✅ Ensure it's properly set
+#        run: |
+#          echo "🔍 Checking APPIUM_PATH: $APPIUM_PATH"
+#          if [ -z "$APPIUM_PATH" ]; then
+#            echo "❌ APPIUM_PATH is not set! Failing job."
+#            exit 1
+#          fi
+#
+#      - name: Ensure Target Directory Exists
+#        run: |
+#          mkdir -p /home/runner/work/Findit-App/
+#          cp src/test/resources/apps/V1.2.2.apk /home/runner/work/Findit-App/V1.2.2.apk
+#          uname -m
+#
+#      - name: Verify APK Existence
+#        run: |
+#          if [ -f src/test/resources/apps/V1.2.2.apk ]; then
+#            echo "✅ APK found!"
+#            file src/test/resources/apps/V1.2.2.apk  # Check if it's a valid APK
+#            ls -lh src/test/resources/apps/V1.2.2.apk
+#            else
+#            echo "❌ APK NOT FOUND!"
+#            exit 1
+#            fi
+#
+#      - name: Debug APK Path and Permissions
+#        run: |
+#          ls -lah /home/runner/work/Findit-App/V1.2.2.apk
+#          file /home/runner/work/Findit-App/V1.2.2.apk
+#
+#      - name: Install Allure CLI
+#        run: |
+#          echo "📦 Installing Allure CLI..."
+#          sudo apt update
+#          sudo apt install -y curl unzip
+#
+#          # ✅ Download a fixed version instead of latest
+#          echo "📥 Downloading Allure (Fixed Version)..."
+#          curl -L -o allure.tgz https://github.com/allure-framework/allure2/releases/download/2.24.0/allure-2.24.0.tgz
+#
+#          echo "📂 Extracting Allure..."
+#          tar -zxvf allure.tgz -C /opt/ || { echo "❌ Extraction failed!"; exit 1; }
+#
+#          echo "🔗 Creating Symlink for Allure..."
+#          sudo ln -s /opt/allure-2.24.0/bin/allure /usr/local/bin/allure
+#
+#          echo "✅ Installed Allure CLI Version: $(allure --version)"
+#
+#      - name: Debug Allure Download
+#        run: |
+#          echo "🔍 Checking Allure Tarball..."
+#          ls -lah allure.tgz
+#          file allure.tgz  # Should print "gzip compressed data"
+#      - name: Setup Android SDK
+#        uses: android-actions/setup-android@v3
+#
+#      - name: Accept Android SDK Licenses
+#        run: yes | sdkmanager --licenses
+#
+#      - name: Install Required Android Packages
+#        run: |
+#          sdkmanager "platform-tools" "platforms;android-30" "system-images;android-30;google_apis;x86_64" "emulator"
+#
+#      - name: Create and Start Emulator
+#        run: |
+#          echo "🛠 Creating AVD for Pixel 6 API 30..."
+#          export ANDROID_AVD_HOME=$HOME/.android/avd  # ✅ Force correct AVD path
+#
+#          AVD_NAME="Pixel_6_API_30"
+#
+#
+#          # Check if AVD already exists
+#          if [ ! -d "$HOME/.android/avd/$AVD_NAME.avd" ]; then
+#          echo "⚡ AVD not found, creating new one..."
+#          mkdir -p $ANDROID_AVD_HOME
+#          echo "no" | avdmanager create avd -n $AVD_NAME -k "system-images;android-30;google_apis;x86_64" --device "pixel_6"
+#          else
+#          echo "✅ AVD already exists, skipping creation."
+#          fi
+#
+#          echo "📋 Available AVDs:"
+#          avdmanager list avd
+#
+#          echo "🚀 Starting Emulator..."
+#          export ANDROID_EMULATOR_HOME=$HOME/.android
+#          nohup $ANDROID_HOME/emulator/emulator -avd Pixel_6_API_30 -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim &
+#          sleep 60  # Wait for emulator to boot
+#
+#          echo "🕒 Waiting for emulator to boot..."
+#          sleep 60  # Wait for boot
+#
+#          echo "🔄 Verifying Emulator Status..."
+#          adb wait-for-device
+#          adb shell getprop sys.boot_completed | grep -m 1 '1'
+#
+#          echo "📏 Disabling Animations"
+#          adb shell settings put global window_animation_scale 0
+#          adb shell settings put global transition_animation_scale 0
+#          adb shell settings put global animator_duration_scale 0
+#
+#          echo "📏 Default Screen Resolution:"
+#          adb shell wm size
+#
+#          echo "📏 Forcing High Resolution"
+#          adb shell wm size 1080x2400
+#          adb shell wm density 537
+#
+#          echo "📏 Updated Screen Resolution:"
+#          adb shell wm size
+#          adb shell wm density
+#
+#          echo "📱 Device Info:"
+#          adb shell getprop ro.product.model
+#          adb shell getprop ro.product.brand
+#          adb shell getprop ro.build.version.release
+#
+#      - name: Clear Previous Allure Results
+#        run: |
+#          echo "🧹 Cleaning previous Allure results..."
+#          rm -rf allure-results allure-report allure-history || true
+#          mkdir -p allure-results allure-report allure-history  # ✅ Ensure fresh directories exist
+#
+#
+#      - name: Run Tests & Collect New Allure Results
+#        run: |
+#          echo "🛠 Running Tests..."
+#          mvn clean test  # ✅ Run tests and generate new allure-results
+#          ls -lah allure-results
+#
+#      - name: Generate Fresh Allure Report
+#        run: |
+#          echo "📊 Generating Allure Report..."
+#          allure generate allure-results --clean -o allure-report  # ✅ Generate new report
+#          ls -lah allure-report
+#
+#      - name: Store Allure Report
+#        uses: actions/upload-artifact@v4
+#        if: always()
+#        with:
+#          name: allure-report
+#          path: allure-report  # ✅ Save generated test reports
+#          retention-days: 7
+#
+#      - name: Publish Test Report to GitHub Pages
+#        uses: peaceiris/actions-gh-pages@v3
+#        if: always()
+#        with:
+#          github_token: ${{ secrets.TOKEN }}
+#          publish_branch: gh-pages
+#          publish_dir: allure-report  # ✅ Upload only Allure reports, not entire repo
+#
+#      - name: Install mailx
+#        run: sudo apt-get install -y mailutils
+#
+#      - name: Configure mailx for SMTP
+#        run: |
+#          echo "set smtp=smtps://smtp.gmail.com:465" >> ~/.mailrc
+#          echo "set smtp-auth=login" >> ~/.mailrc
+#          echo "set smtp-auth-user=${{ secrets.SMTP_USERNAME }}" >> ~/.mailrc
+#          echo "set smtp-auth-password=${{ secrets.SMTP_PASSWORD }}" >> ~/.mailrc
+#          echo "set ssl-verify=ignore" >> ~/.mailrc
+#
+#      - name: Compress Allure Report
+#        run: zip -r allure-report.zip allure-report
+#
+#      - name: Send Email with Allure Report (ZIP)
+#        run: |
+#          echo "Hello, please find the attached Allure test report in ZIP format.Install node.js then run this command npx http-server allure-report -p 8080 .Then open unzip the file and open index.html file" | mailx -s "Allure Test Report" -A allure-report.zip ashfaq.ahmed@findit.id
+
 name: Run Android Tests in GitHub Runner
 
 on:
@@ -13,6 +282,24 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+      # ✅ Cache Maven Dependencies
+      - name: Cache Maven Dependencies
+        id: cache-dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-${{ runner.os }}-
+
+      # ✅ Cache Global NPM Modules (Appium)
+      - name: Cache Global NPM Modules
+        id: cache-npm
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: npm-${{ runner.os }}-
 
       - name: Setup Java
         uses: actions/setup-java@v3
@@ -29,14 +316,6 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Cache Maven Dependencies
-        id: cache-dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2
-          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            maven-${{ runner.os }}-
 
       - name: Install Appium & Dependencies
         run: |
@@ -128,6 +407,15 @@ jobs:
           ls -lah /home/runner/work/Findit-App/V1.2.2.apk
           file /home/runner/work/Findit-App/V1.2.2.apk
 
+      # ✅ Cache Allure CLI (Prevents downloading Allure every run)
+      - name: Cache Allure CLI
+        id: cache-allure
+        uses: actions/cache@v3
+        with:
+          path: /opt/allure-2.24.0
+          key: allure-${{ runner.os }}-2.24.0
+          restore-keys: allure-${{ runner.os }}-
+
       - name: Install Allure CLI
         run: |
           echo "📦 Installing Allure CLI..."
@@ -151,6 +439,26 @@ jobs:
           echo "🔍 Checking Allure Tarball..."
           ls -lah allure.tgz
           file allure.tgz  # Should print "gzip compressed data"
+
+      # ✅ Cache Android SDK (Prevents re-downloading SDK)
+      - name: Cache Android SDK
+        id: cache-android-sdk
+        uses: actions/cache@v3
+        with:
+          path: ~/.android
+          key: android-sdk-${{ runner.os }}-${{ hashFiles('**/build.gradle') }}
+          restore-keys: android-sdk-${{ runner.os }}-
+
+      # ✅ Cache Android Virtual Device (AVD)
+      - name: Cache AVD (Android Virtual Device)
+        id: cache-avd
+        uses: actions/cache@v3
+        with:
+          path: ~/.android/avd
+          key: avd-${{ runner.os }}-${{ hashFiles('**/build.gradle') }}
+          restore-keys: avd-${{ runner.os }}-
+
+
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
@@ -261,9 +569,9 @@ jobs:
           echo "set ssl-verify=ignore" >> ~/.mailrc
 
       - name: Compress Allure Report
-        run: zip -r allure-report.zip allure-report
+        run: zip -r allure-report.txt allure-report
 
       - name: Send Email with Allure Report (ZIP)
         run: |
-          echo "Hello, please find the attached Allure test report in ZIP format.Install node.js then run this command npx http-server allure-report -p 8080 .Then open unzip the file and open index.html file" | mailx -s "Allure Test Report" -A allure-report.zip ashfaq.ahmed@findit.id
+          echo "Hello, please find the attached Allure test report in ZIP format.Install node.js then run this command npx http-server allure-report -p 8080 .Then open unzip the file and open index.html file" | mailx -s "Allure Test Report" -A allure-report.txt ashfaq.ahmed@findit.id
 
