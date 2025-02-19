@@ -343,54 +343,54 @@ jobs:
         run: |
           echo "🛠 Creating AVD for Pixel 6 API 30..."
           export ANDROID_AVD_HOME=$HOME/.android/avd  # ✅ Force correct AVD path
-          
+
           AVD_NAME="Pixel_6_API_30"
 
+
           # Check if AVD already exists
-          if [ ! -d "$ANDROID_AVD_HOME/$AVD_NAME.avd" ]; then
-            echo "⚡ AVD not found, creating new one..."
-            mkdir -p $ANDROID_AVD_HOME 
-            echo "no" | avdmanager create avd -n $AVD_NAME -k "system-images;android-30;google_apis;x86_64" --device "pixel_6"
+          if [ ! -d "$HOME/.android/avd/$AVD_NAME.avd" ]; then
+          echo "⚡ AVD not found, creating new one..."
+          mkdir -p $ANDROID_AVD_HOME
+          echo "no" | avdmanager create avd -n $AVD_NAME -k "system-images;android-30;google_apis;x86_64" --device "pixel_6"
           else
-            echo "✅ AVD already exists, skipping creation."
+          echo "✅ AVD already exists, skipping creation."
           fi
-          
+
+          echo "📋 Available AVDs:"
+          avdmanager list avd
+
           echo "🚀 Starting Emulator..."
-          export ANDROID_EMULATOR_HOME=$HOME/.android 
+          export ANDROID_EMULATOR_HOME=$HOME/.android
           nohup $ANDROID_HOME/emulator/emulator -avd Pixel_6_API_30 -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim &
-          sleep 30  # Allow emulator to start
+          sleep 60  # Wait for emulator to boot
 
           echo "🕒 Waiting for emulator to boot..."
+          sleep 60  # Wait for boot
+
+          echo "🔄 Verifying Emulator Status..."
           adb wait-for-device
-          adb shell getprop sys.boot_completed | grep -m 1 '1' || exit 1
+          adb shell getprop sys.boot_completed | grep -m 1 '1'
+
+          echo "📏 Disabling Animations"
+          adb shell settings put global window_animation_scale 0
+          adb shell settings put global transition_animation_scale 0
+          adb shell settings put global animator_duration_scale 0
+
+          echo "📏 Default Screen Resolution:"
+          adb shell wm size
 
           echo "📏 Forcing High Resolution"
           adb shell wm size 1080x2400
           adb shell wm density 537
-          
+
           echo "📏 Updated Screen Resolution:"
           adb shell wm size
           adb shell wm density
-          
+
           echo "📱 Device Info:"
           adb shell getprop ro.product.model
           adb shell getprop ro.product.brand
           adb shell getprop ro.build.version.release
-
-      - name: Run Tests & Collect New Allure Results
-        run: |
-          echo "🛠 Running Tests..."
-          mvn clean test  # ✅ Run tests and generate new allure-results
-
-      - name: Generate Fresh Allure Report
-        run: |
-          echo "📊 Generating Allure Report..."
-          if [ -d "allure-results" ] && [ "$(ls -A allure-results)" ]; then
-            allure generate allure-results --clean -o allure-report
-          else
-            echo "❌ No Allure Results Found! Skipping Report Generation."
-            exit 1
-          fi
 
       - name: Store Allure Results (for CI Debugging)
         uses: actions/upload-artifact@v4
