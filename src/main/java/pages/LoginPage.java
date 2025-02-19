@@ -15,7 +15,7 @@ public class LoginPage extends BasePage {
     public void LoginWithEmail(String email) {
         System.out.println("sdfd");
         System.out.println(BasePage.driver.getPageSource());
-        waitForVisibilityOfElement("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,20);
+        waitForVisibilityOfElement("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,40);
         System.out.println("visible continue with email");
         this.clickButton("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         System.out.println("Clicked continue with email");

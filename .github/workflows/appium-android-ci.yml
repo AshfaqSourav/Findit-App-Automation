@@ -233,19 +233,21 @@ jobs:
         run: |
           echo "🛠 Running Tests..."
           mvn clean test  # ✅ Run tests and generate new allure-results
+          ls -lah allure-results
 
       - name: Generate Fresh Allure Report
         run: |
           echo "📊 Generating Allure Report..."
           allure generate allure-results --clean -o allure-report  # ✅ Generate new report
+          ls -lah allure-report
 
-      - name: Store Allure Results (for CI Debugging)
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: allure-results
-          path: allure-results  # ✅ Save test execution results
-          retention-days: 7  # ✅ Keep for 7 days for debugging
+#      - name: Store Allure Results (for CI Debugging)
+#        uses: actions/upload-artifact@v4
+#        if: always()
+#        with:
+#          name: allure-results
+#          path: allure-results  # ✅ Save test execution results
+#          retention-days: 7  # ✅ Keep for 7 days for debugging
 
       - name: Store Allure Report (for CI Debugging)
         uses: actions/upload-artifact@v4
