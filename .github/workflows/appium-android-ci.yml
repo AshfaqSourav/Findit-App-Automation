@@ -214,13 +214,13 @@ jobs:
           adb shell getprop ro.product.brand
           adb shell getprop ro.build.version.release
 
-      - name: Load Test Report History
-        uses: actions/checkout@v4
-        if: always()
-        continue-on-error: true
-        with:
-          ref: gh-pages
-          path: gh-pages  # ✅ Checkout only gh-pages branch, not the entire repo
+#      - name: Load Test Report History
+#        uses: actions/checkout@v4
+#        if: always()
+#        continue-on-error: true
+#        with:
+#          ref: gh-pages
+#          path: gh-pages  # ✅ Checkout only gh-pages branch, not the entire repo
 
       - name: Clear Previous Allure Results
         run: |
@@ -247,6 +247,13 @@ jobs:
           path: allure-results  # ✅ Save test execution results
           retention-days: 7  # ✅ Keep for 7 days for debugging
 
+      - name: Store Allure Report (for CI Debugging)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: allure-report
+          path: allure-report  # ✅ Save generated test reports
+          retention-days: 7
 
       - name: Publish Test Report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
