@@ -544,6 +544,9 @@ jobs:
       - name: Install mailx
         run: sudo apt-get install -y mailutils
 
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
       - name: Configure mailx for SMTP
         run: |
           echo "set smtp=smtps://smtp.gmail.com:465" >> ~/.mailrc
@@ -553,12 +556,16 @@ jobs:
           echo "set ssl-verify=ignore" >> ~/.mailrc
 
       - name: Compress Allure Report
-        run: zip -r allure-report.txt allure-report
+        run: zip -r allure-report.zip allure-report
 
       - name: Extract Key Test Summary
         run: |
-          grep -E '"total"|"passed"|"failed"|"skipped"' allure-report/widgets/summary.json > summary.txt
+          if [ -f allure-report/widgets/summary.json ]; then
+              jq -r '"Report: \(.reportName) | Passed: \(.statistic.passed) | Failed: \(.statistic.failed) | Total: \(.statistic.total)"' allure-report/widgets/summary.json > summary.txt
+             else
+                echo "No summary found. Check if tests executed correctly." > summary.txt
+              fi
 
-      - name: Send Email with Allure Report (ZIP)
-        run: |
-          cat summary.txt | mailx -s "Allure Test Summary" -A allure-report.txt ashfaq.ahmed@findit.id
+            - name: Send Email with Allure Report (ZIP)
+              run: |
+                mailx -s "Allure Test Summary" -A allure-report.zip ashfaq.ahmed@findit.id < summary.txt
