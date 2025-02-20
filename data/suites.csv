@@ -1,2 +1,2 @@
 "Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
-"passed","Wed Feb 19 15:39:58 UTC 2025","Wed Feb 19 15:40:12 UTC 2025","14106","Appium Test Suite","Tests","tests.LoginPageTest","tests.LoginPageTest","testLoginWithEmail","testLoginWithEmail",""
+"passed","Thu Feb 20 04:41:38 UTC 2025","Thu Feb 20 04:41:52 UTC 2025","13440","Appium Test Suite","Tests","tests.LoginPageTest","tests.LoginPageTest","testLoginWithEmail","testLoginWithEmail",""
