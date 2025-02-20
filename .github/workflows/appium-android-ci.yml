@@ -557,7 +557,7 @@ jobs:
           echo "📦 Compressing Allure Report..."
           zip -r allure-report.zip allure-report
           echo "✅ Compression Completed. File Size:"
-          ls -lh allure-report.zip
+          ls -lh allure-report.txt
 
       - name: Extract Key Test Summary
         run: |
@@ -571,7 +571,7 @@ jobs:
 
       - name: Check File Size Before Sending
         run: |
-          FILE_SIZE=$(du -m allure-report.zip | cut -f1)
+          FILE_SIZE=$(du -m allure-report.txt | cut -f1)
           echo "📦 Allure Report ZIP Size: ${FILE_SIZE}MB"
           
           if [ "${FILE_SIZE}" -gt 20 ]; then
@@ -581,7 +581,7 @@ jobs:
 
       - name: Send Email with Allure Report (ZIP)
         run: |
-          FILE_SIZE=$(du -m allure-report.zip | cut -f1)
+          FILE_SIZE=$(du -m allure-report.txt | cut -f1)
           if [ "${FILE_SIZE}" -gt 20 ]; then
               # If the file is too big, send only the summary
               echo "⚠️ Allure Report is too large to attach. Sending summary only."
@@ -589,5 +589,5 @@ jobs:
           else
               # If the file size is acceptable, send the full ZIP
               echo "✅ Sending full Allure Report as an attachment..."
-              cat summary.txt | mailx -s "Allure Test Report Summary" -A allure-report.zip ashfaq.ahmed@findit.id
+                  cat summary.txt | mailx -s "Allure Test Report Summary" -A allure-report.txt ashfaq.ahmed@findit.id && echo "✅ Email Sent!" || echo "❌ Email Failed!"
           fi
