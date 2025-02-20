@@ -267,7 +267,7 @@
 #        run: |
 #          echo "Hello, please find the attached Allure test report in ZIP format.Install node.js then run this command npx http-server allure-report -p 8080 .Then open unzip the file and open index.html file" | mailx -s "Allure Test Report" -A allure-report.zip ashfaq.ahmed@findit.id
 
-name: Run Android Tests in GitHub Runner
+name: CI/CD
 
 on:
   push:
@@ -533,14 +533,6 @@ jobs:
           path: allure-report  # ✅ Save generated test reports
           retention-days: 7
 
-      - name: Publish Test Report to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        if: always()
-        with:
-          github_token: ${{ secrets.TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: allure-report  # ✅ Upload only Allure reports, not entire repo
-
       - name: Install Required Packages
         run: sudo apt-get install -y mutt jq zip mailutils
 
@@ -554,38 +546,32 @@ jobs:
 
       - name: Compress Allure Report
         run: |
-                echo "📦 Compressing Allure Report..."
-                zip -r allure-report.zip allure-report || { echo "❌ ZIP Failed!"; exit 1; }
-                echo "✅ Compression Completed. File Size:"
+                zip -r allure-report.zip allure-report
                 ls -lh allure-report.zip
 
       - name: Extract Key Test Summary
         run: |
-          if [ -f allure-report/widgets/summary.json ]; then
-              jq -r '"Report: \(.reportName) | Passed: \(.statistic.passed) | Failed: \(.statistic.failed) | Total: \(.statistic.total)"' allure-report/widgets/summary.json > summary.txt
-          else
-              echo "No summary found. Check if tests executed correctly." > summary.txt
-          fi
-          echo "✅ Test Summary:"
-          cat summary.txt
+                if [ -f allure-report/widgets/summary.json ]; then
+                    jq -r '"Report: \(.reportName) | Passed: \(.statistic.passed) | Failed: \(.statistic.failed) | Total: \(.statistic.total)"' allure-report/widgets/summary.json > summary.txt
+                else
+                    echo "No summary found. Check if tests executed correctly." > summary.txt
+                fi
 
       - name: Check File Size Before Sending
         run: |
-            FILE_SIZE=$(du -m allure-report.zip | cut -f1)
-            echo "📦 Allure Report Size: ${FILE_SIZE}MB"
+                FILE_SIZE=$(du -m allure-report.zip | cut -f1)
+                echo "📦 Allure Report Size: ${FILE_SIZE}MB"
                 
-            if [ "${FILE_SIZE}" -gt 20 ]; then
-                echo "⚠️ File is larger than 20MB. Sending only test summary via email..."
-                echo "The Allure report is too large to attach. Please download it manually." >> summary.txt
-            fi
+                if [ "${FILE_SIZE}" -gt 20 ]; then
+                    echo "⚠️ Report too large, sending only summary."
+                    echo "Report is too large to attach. Please download manually." >> summary.txt
+                fi
 
       - name: Send Email with Allure Report using `mutt`
         run: |
-            FILE_SIZE=$(du -m allure-report.zip | cut -f1)
+                FILE_SIZE=$(du -m allure-report.zip | cut -f1)
                 if [ "${FILE_SIZE}" -gt 20 ]; then
-                    echo "⚠️ Allure Report is too large to attach. Sending summary only."
                     mutt -s "Allure Test Report Summary" -- "ashfaq.ahmed@findit.id" < summary.txt && echo "✅ Email Sent!" || echo "❌ Email Failed!"
                 else
-                    echo "✅ Sending full Allure Report as an attachment..."
                     mutt -s "Allure Test Report Summary" -a allure-report.zip -- "ashfaq.ahmed@findit.id" < summary.txt && echo "✅ Email Sent!" || echo "❌ Email Failed!"
                 fi
