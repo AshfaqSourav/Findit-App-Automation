@@ -541,11 +541,8 @@ jobs:
           publish_branch: gh-pages
           publish_dir: allure-report  # ✅ Upload only Allure reports, not entire repo
 
-      - name: Install mailx
-        run: sudo apt-get install -y mailutils
-
-      - name: Install jq
-        run: sudo apt-get install -y jq
+      - name: Install mailx and jq
+        run: sudo apt-get install -y mailutils jq zip
 
       - name: Configure mailx for SMTP
         run: |
@@ -556,7 +553,11 @@ jobs:
           echo "set ssl-verify=ignore" >> ~/.mailrc
 
       - name: Compress Allure Report
-        run: zip -r allure-report.zip allure-report
+        run: |
+          echo "📦 Compressing Allure Report..."
+          zip -r allure-report.zip allure-report
+          echo "✅ Compression Completed. File Size:"
+          ls -lh allure-report.zip
 
       - name: Extract Key Test Summary
         run: |
@@ -565,7 +566,28 @@ jobs:
           else
               echo "No summary found. Check if tests executed correctly." > summary.txt
           fi
+          echo "✅ Test Summary:"
+          cat summary.txt
+
+      - name: Check File Size Before Sending
+        run: |
+          FILE_SIZE=$(du -m allure-report.zip | cut -f1)
+          echo "📦 Allure Report ZIP Size: ${FILE_SIZE}MB"
+          
+          if [ "${FILE_SIZE}" -gt 20 ]; then
+              echo "⚠️ File is larger than 20MB. Sending only test summary via email..."
+              echo "The Allure report is too large to attach. Please download it manually." >> summary.txt
+          fi
 
       - name: Send Email with Allure Report (ZIP)
         run: |
-          cat summary.txt | mailx -s "Allure Test Report Summary" -A allure-report/index.html ashfaq.ahmed@findit.id
+          FILE_SIZE=$(du -m allure-report.zip | cut -f1)
+          if [ "${FILE_SIZE}" -gt 20 ]; then
+              # If the file is too big, send only the summary
+              echo "⚠️ Allure Report is too large to attach. Sending summary only."
+              cat summary.txt | mailx -s "Allure Test Report Summary" ashfaq.ahmed@findit.id
+          else
+              # If the file size is acceptable, send the full ZIP
+              echo "✅ Sending full Allure Report as an attachment..."
+              cat summary.txt | mailx -s "Allure Test Report Summary" -A allure-report.zip ashfaq.ahmed@findit.id
+          fi
