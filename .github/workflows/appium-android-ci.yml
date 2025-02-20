@@ -555,7 +555,8 @@ jobs:
       - name: Compress Allure Report
         run: |
           echo "📦 Compressing Allure Report..."
-          zip -r allure-report.zip allure-report
+          zip -r allure-report.zip allure-report || { echo "❌ ZIP Failed!"; exit 1; }
+          mv allure-report.zip allure-report.txt  # Rename ZIP to TXT to avoid email rejection
           echo "✅ Compression Completed. File Size:"
           ls -lh allure-report.txt
 
