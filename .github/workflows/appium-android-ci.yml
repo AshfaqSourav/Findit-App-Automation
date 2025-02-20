@@ -558,4 +558,4 @@ jobs:
 
       - name: Send Email with Allure Report (ZIP)
         run: |
-          cat summary.txt | mailx -s "Allure Test Report Summary" -A allure-report ashfaq.ahmed@findit.id
+          cat summary.txt | mailx -s "Allure Test Report Summary"  ashfaq.ahmed@findit.id
