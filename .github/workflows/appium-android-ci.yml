@@ -562,10 +562,10 @@ jobs:
         run: |
           if [ -f allure-report/widgets/summary.json ]; then
               jq -r '"Report: \(.reportName) | Passed: \(.statistic.passed) | Failed: \(.statistic.failed) | Total: \(.statistic.total)"' allure-report/widgets/summary.json > summary.txt
-             else
-                echo "No summary found. Check if tests executed correctly." > summary.txt
-              fi
+          else
+              echo "No summary found. Check if tests executed correctly." > summary.txt
+          fi
 
       - name: Send Email with Allure Report (ZIP)
         run: |
-          mailx -s "Allure Test Summary" -A allure-report.zip ashfaq.ahmed@findit.id < summary.txt
+          cat summary.txt | mailx -s "Allure Test Report Summary" -A allure-report/index.html ashfaq.ahmed@findit.id
