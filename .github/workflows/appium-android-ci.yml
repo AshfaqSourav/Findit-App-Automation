@@ -533,45 +533,31 @@ jobs:
           path: allure-report  # ✅ Save generated test reports
           retention-days: 7
 
-      - name: Install Required Packages
-        run: sudo apt-get install -y mutt jq zip mailutils
+      - name: Install mailx
+        run: sudo apt-get install -y mailutils
 
-      - name: Configure `mutt` for SMTP
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Configure mailx for SMTP
         run: |
-                mkdir -p ~/.mutt
-                echo "set smtp_url=\"smtps://smtp.gmail.com:465\"" > ~/.mutt/muttrc
-                echo "set smtp_pass=\"${{ secrets.SMTP_PASSWORD }}\"" >> ~/.mutt/muttrc
-                echo "set realname=\"CI Report\"" >> ~/.mutt/muttrc
-                echo "set from=\"${{ secrets.SMTP_USERNAME }}\"" >> ~/.mutt/muttrc
+          echo "set smtp=smtps://smtp.gmail.com:465" >> ~/.mailrc
+          echo "set smtp-auth=login" >> ~/.mailrc
+          echo "set smtp-auth-user=${{ secrets.SMTP_USERNAME }}" >> ~/.mailrc
+          echo "set smtp-auth-password=${{ secrets.SMTP_PASSWORD }}" >> ~/.mailrc
+          echo "set ssl-verify=ignore" >> ~/.mailrc
 
       - name: Compress Allure Report
-        run: |
-                zip -r allure-report.zip allure-report
-                ls -lh allure-report.zip
+        run: zip -r allure-report.zip allure-report
 
       - name: Extract Key Test Summary
         run: |
-                if [ -f allure-report/widgets/summary.json ]; then
-                    jq -r '"Report: \(.reportName) | Passed: \(.statistic.passed) | Failed: \(.statistic.failed) | Total: \(.statistic.total)"' allure-report/widgets/summary.json > summary.txt
-                else
-                    echo "No summary found. Check if tests executed correctly." > summary.txt
-                fi
+          if [ -f allure-report/widgets/summary.json ]; then
+              jq -r '"Report: \(.reportName) | Passed: \(.statistic.passed) | Failed: \(.statistic.failed) | Total: \(.statistic.total)"' allure-report/widgets/summary.json > summary.txt
+          else
+              echo "No summary found. Check if tests executed correctly." > summary.txt
+          fi
 
-      - name: Check File Size Before Sending
+      - name: Send Email with Allure Report (ZIP)
         run: |
-                FILE_SIZE=$(du -m allure-report.zip | cut -f1)
-                echo "📦 Allure Report Size: ${FILE_SIZE}MB"
-                
-                if [ "${FILE_SIZE}" -gt 20 ]; then
-                    echo "⚠️ Report too large, sending only summary."
-                    echo "Report is too large to attach. Please download manually." >> summary.txt
-                fi
-
-      - name: Send Email with Allure Report using `mutt`
-        run: |
-                FILE_SIZE=$(du -m allure-report.zip | cut -f1)
-                if [ "${FILE_SIZE}" -gt 20 ]; then
-                    mutt -s "Allure Test Report Summary" -- "ashfaq.ahmed@findit.id" < summary.txt && echo "✅ Email Sent!" || echo "❌ Email Failed!"
-                else
-                    mutt -s "Allure Test Report Summary" -a allure-report.zip -- "ashfaq.ahmed@findit.id" < summary.txt && echo "✅ Email Sent!" || echo "❌ Email Failed!"
-                fi
+          cat summary.txt | mailx -s "Allure Test Report Summary" -A allure-report/index.html ashfaq.ahmed@findit.id
