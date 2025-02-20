@@ -541,24 +541,23 @@ jobs:
           publish_branch: gh-pages
           publish_dir: allure-report  # ✅ Upload only Allure reports, not entire repo
 
-      - name: Install mailx and jq
-        run: sudo apt-get install -y mailutils jq zip
+      - name: Install Required Packages
+        run: sudo apt-get install -y mutt jq zip mailutils
 
-      - name: Configure mailx for SMTP
+      - name: Configure `mutt` for SMTP
         run: |
-          echo "set smtp=smtps://smtp.gmail.com:465" >> ~/.mailrc
-          echo "set smtp-auth=login" >> ~/.mailrc
-          echo "set smtp-auth-user=${{ secrets.SMTP_USERNAME }}" >> ~/.mailrc
-          echo "set smtp-auth-password=${{ secrets.SMTP_PASSWORD }}" >> ~/.mailrc
-          echo "set ssl-verify=ignore" >> ~/.mailrc
+                mkdir -p ~/.mutt
+                echo "set smtp_url=\"smtps://smtp.gmail.com:465\"" > ~/.mutt/muttrc
+                echo "set smtp_pass=\"${{ secrets.SMTP_PASSWORD }}\"" >> ~/.mutt/muttrc
+                echo "set realname=\"CI Report\"" >> ~/.mutt/muttrc
+                echo "set from=\"${{ secrets.SMTP_USERNAME }}\"" >> ~/.mutt/muttrc
 
       - name: Compress Allure Report
         run: |
-          echo "📦 Compressing Allure Report..."
-          zip -r allure-report.zip allure-report || { echo "❌ ZIP Failed!"; exit 1; }
-          mv allure-report.zip allure-report.txt  # Rename ZIP to TXT to avoid email rejection
-          echo "✅ Compression Completed. File Size:"
-          ls -lh allure-report.txt
+                echo "📦 Compressing Allure Report..."
+                zip -r allure-report.zip allure-report || { echo "❌ ZIP Failed!"; exit 1; }
+                echo "✅ Compression Completed. File Size:"
+                ls -lh allure-report.zip
 
       - name: Extract Key Test Summary
         run: |
@@ -572,23 +571,21 @@ jobs:
 
       - name: Check File Size Before Sending
         run: |
-          FILE_SIZE=$(du -m allure-report.txt | cut -f1)
-          echo "📦 Allure Report ZIP Size: ${FILE_SIZE}MB"
-          
-          if [ "${FILE_SIZE}" -gt 20 ]; then
-              echo "⚠️ File is larger than 20MB. Sending only test summary via email..."
-              echo "The Allure report is too large to attach. Please download it manually." >> summary.txt
-          fi
+            FILE_SIZE=$(du -m allure-report.zip | cut -f1)
+            echo "📦 Allure Report Size: ${FILE_SIZE}MB"
+                
+            if [ "${FILE_SIZE}" -gt 20 ]; then
+                echo "⚠️ File is larger than 20MB. Sending only test summary via email..."
+                echo "The Allure report is too large to attach. Please download it manually." >> summary.txt
+            fi
 
-      - name: Send Email with Allure Report (ZIP)
+      - name: Send Email with Allure Report using `mutt`
         run: |
-          FILE_SIZE=$(du -m allure-report.txt | cut -f1)
-          if [ "${FILE_SIZE}" -gt 20 ]; then
-              # If the file is too big, send only the summary
-              echo "⚠️ Allure Report is too large to attach. Sending summary only."
-              cat summary.txt | mailx -s "Allure Test Report Summary" ashfaq.ahmed@findit.id
-          else
-              # If the file size is acceptable, send the full ZIP
-              echo "✅ Sending full Allure Report as an attachment..."
-                  cat summary.txt | mailx -s "Allure Test Report Summary" -A allure-report.txt ashfaq.ahmed@findit.id && echo "✅ Email Sent!" || echo "❌ Email Failed!"
-          fi
+            FILE_SIZE=$(du -m allure-report.zip | cut -f1)
+                if [ "${FILE_SIZE}" -gt 20 ]; then
+                    echo "⚠️ Allure Report is too large to attach. Sending summary only."
+                    mutt -s "Allure Test Report Summary" -- "ashfaq.ahmed@findit.id" < summary.txt && echo "✅ Email Sent!" || echo "❌ Email Failed!"
+                else
+                    echo "✅ Sending full Allure Report as an attachment..."
+                    mutt -s "Allure Test Report Summary" -a allure-report.zip -- "ashfaq.ahmed@findit.id" < summary.txt && echo "✅ Email Sent!" || echo "❌ Email Failed!"
+                fi
