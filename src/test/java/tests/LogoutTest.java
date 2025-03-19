@@ -11,8 +11,7 @@ public class LogoutTest extends BaseTest{
     public void testLogout() throws Exception {
 //        BasePage.restartFreshApp();
         loginPage.LoginWithEmail(this.buyerEmail);
-        Assert.fail("This test is intentionally failed.");
-        BasePage.quitDriver();
+//        Assert.fail("This test is intentionally failed.");
         logoutPage.logout();
     }
 }
