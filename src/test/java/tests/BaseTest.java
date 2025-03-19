@@ -2,9 +2,8 @@ package tests;
 
 
 import org.openqa.selenium.WebDriver;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Parameters;
+import org.testng.ITestResult;
+import org.testng.annotations.*;
 
 import config.DeviceConfig;
 import enums.Credentials;
@@ -12,12 +11,16 @@ import pages.LoginPage;
 import pages.BasePage;
 import pages.LogoutPage;
 import pages.ProductUploadPage;
+import utils.ScreenRecordingUtils;
+import utils.ScreenshotUtils;
 
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 
 public class BaseTest {
 
-    protected WebDriver driver; // Use WebDriver instead of MobileElement-specific AppiumDriver
+    protected WebDriver driver;
     protected LoginPage loginPage;
     protected LogoutPage logoutPage;
     protected String buyerEmail;
@@ -27,7 +30,18 @@ public class BaseTest {
     protected String productLocation;
     protected ProductUploadPage productUploadPage;
 
-    @BeforeClass
+//    @BeforeMethod(alwaysRun = true)
+//    public void startScreenRecording() {
+//        try {
+//            System.out.println("🎥 Starting screen recording via ADB...");
+//            Runtime.getRuntime().exec("adb shell screenrecord /sdcard/test_video.mp4");
+//            TimeUnit.SECONDS.sleep(2); // Give it some time to start recording
+//        } catch (IOException | InterruptedException e) {
+//            System.out.println("❌ Failed to start screen recording: " + e.getMessage());
+//        }
+//    }
+
+    @BeforeMethod(alwaysRun = true)
     @Parameters("platformName") // TestNG parameter
     public void setup() throws Exception {
         BasePage.initializeDriver(); // Initialize driver from BasePage
@@ -36,6 +50,16 @@ public class BaseTest {
         this.loginPage = new LoginPage(); // Pass driver instance to page classes
         this.productUploadPage = new ProductUploadPage(); // Pass driver instance to page classes
         this.logoutPage = new LogoutPage();
+        startScreenRecording();
+    }
+    private void startScreenRecording() {
+        try {
+            System.out.println("🎥 Starting screen recording via ADB...");
+            Runtime.getRuntime().exec("adb shell screenrecord /sdcard/test_video.mp4");
+            TimeUnit.SECONDS.sleep(2); // Give it some time to start recording
+        } catch (IOException | InterruptedException e) {
+            System.out.println("❌ Failed to start screen recording: " + e.getMessage());
+        }
     }
 
     public void setCredential() {
@@ -46,9 +70,29 @@ public class BaseTest {
         this.productLocation = DeviceConfig.properties.getProperty(Credentials.PRODUCT_LOCATION.toString());
     }
 
+    @AfterMethod (alwaysRun = true)
+    public void tearDown(ITestResult result) {
+        if (result.getStatus() == ITestResult.FAILURE || result.getStatus() == ITestResult.SUCCESS_PERCENTAGE_FAILURE) {
+            System.out.println("⚠️ Test Failed/Broken - Capturing Screenshot...");
+            String localScreenshotName= result.getMethod().getMethodName();
+            ScreenshotUtils.captureScreenshot(driver,localScreenshotName);
+            ScreenshotUtils.attachScreenshotToAllure(driver,localScreenshotName);  // ✅ Now calling from BasePage
+        }
+        try {
+            System.out.println("📽 Stopping screen recording via ADB...");
+            Runtime.getRuntime().exec("adb shell pkill -l2 screenrecord");
+            Thread.sleep(2000); // Ensure recording stops properly
+            ScreenRecordingUtils.saveRecordingToFile(result);
+        } catch (IOException | InterruptedException e) {
+            System.out.println("❌ Error stopping screen recording: " + e.getMessage());
+        }
+    }
+
     @AfterClass
-    public void tearDown() {
+    public void quitDriver() {
         BasePage.quitDriver(); // Quit driver using BasePage method
     }
 }
+
+
 

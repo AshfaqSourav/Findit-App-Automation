@@ -4,6 +4,7 @@ import enums.LocatorClassName;
 import config.DeviceConfig;
 import enums.LocatorType;
 import org.openqa.selenium.WebElement;
+import org.testng.Assert;
 
 
 public class LoginPage extends BasePage {
@@ -22,7 +23,7 @@ public class LoginPage extends BasePage {
         System.out.println(BasePage.driver.getPageSource());
         waitForVisibilityOfElement("LOGIN_EMAIL_TEXT", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
         System.out.println("visible txt");
-        this.clickTextField("LOGIN_EMAIL_TEXT", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH, email);
+        this.writeTextField("LOGIN_EMAIL_TEXT", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH, email);
         System.out.println("Email Entered");
         this.clickButton("LOGIN_EMAIL_NEXT_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         System.out.println("Next button clicked");

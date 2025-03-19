@@ -252,6 +252,23 @@ jobs:
           path: allure-report  # ✅ Save generated test reports
           retention-days: 7
 
+      - name: Upload Screen Recordings
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+            name: screen-recordings
+            path: test-recordings/
+            retention-days: 7
+
+      - name: Upload Failure Screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: failure-screenshots
+          path: allure-results/*.png  # ✅ Upload screenshots if they exist
+          retention-days: 7
+
+
       - name: Install mailx
         run: sudo apt-get install -y mailutils
 

@@ -1,14 +1,61 @@
-<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="Appium Test Suite">
+<!--<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">-->
+<!--<suite name="Appium Test Suite">-->
 
-    <test name="Tests">
-        <parameter name="platformName" value="" />
+<!--    <test name="Tests">-->
+<!--        <parameter name="platformName" value="" />-->
+<!--        <classes>-->
+<!--            <class name="tests.LoginPageTest" />-->
+<!--&lt;!&ndash;            <class name="tests.ProductUploadTest" />&ndash;&gt;-->
+<!--&lt;!&ndash;            <class name="tests.LogoutTest" />&ndash;&gt;-->
+<!--        </classes>-->
+<!--    </test>-->
+<!-- -->
+<!-- -->
+<!--</suite>-->
+
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Appium Test Suite" >
+
+    <!-- ✅ Smoke Test Suite -->
+    <test name="Smoke Tests">
+        <parameter name="platformName" value="Android" />
+        <groups>
+            <run>
+                <include name="smoke"/>
+            </run>
+        </groups>
         <classes>
-            <class name="tests.LoginPageTest" />
-<!--            <class name="tests.ProductUploadTest" />-->
-<!--            <class name="tests.LogoutTest" />-->
+            <class name="tests.LoginPageTest"/>
         </classes>
     </test>
- 
- 
+
+    <!-- ✅ Sanity Test Suite -->
+    <test name="Sanity Tests">
+        <parameter name="platformName" value="Android" />
+        <groups>
+            <run>
+                <include name="sanity"/>
+            </run>
+        </groups>
+        <classes>
+<!--            <class name="tests.LoginPageTest"/>-->
+<!--            <class name="tests.LogoutTest"/>-->
+        </classes>
+    </test>
+
+    <!-- ✅ Regression Test Suite -->
+    <test name="Regression Tests">
+        <parameter name="platformName" value="Android" />
+        <groups>
+            <run>
+                <include name="regression"/>
+            </run>
+        </groups>
+        <classes>
+<!--            <class name="tests.ProductUploadTest"/>-->
+            <class name="tests.LogoutTest"/>
+        </classes>
+    </test>
+
 </suite>
+

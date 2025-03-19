@@ -2,6 +2,7 @@ package pages;
 
 import enums.LocatorClassName;
 import enums.LocatorType;
+import org.testng.Assert;
 
 
 import java.io.File;
@@ -16,10 +17,12 @@ public class ProductUploadPage extends BasePage {
     public void productUploadWithCamera(String productName, String price, String location) {
         this.clickButton("SELL_IT_BUTTON", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         this.clickButton("CAPTURE_BUTTON", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        sleep(10000);
         this.clickButton("CAPTURE_TAP_BUTTON", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        waitForVisibilityOfElement("CAPTURE_OK_BUTTON", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
         this.clickButton("CAPTURE_OK_BUTTON", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
-        waitForVisibilityOfElement("PRODUCT_NAME_FIELD", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH,30);
-        this.clickTextField("PRODUCT_NAME_FIELD", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH, productName);
+        waitForVisibilityOfElement("PRODUCT_NAME_FIELD", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
+        this.writeTextField("PRODUCT_NAME_FIELD", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH, productName);
         this.clickButton("CATEGORY_FIELD", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         this.clickButton("CATEGORY_FIRST_OPTION", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         this.scrollHalfway();
@@ -28,11 +31,13 @@ public class ProductUploadPage extends BasePage {
         this.clickButton("CONDITION_FIELD", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         this.clickButton("CONDITION_FIRST_OPTION", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         this.clickButton("NEXT_BUTTON", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
-        this.clickTextField("PRICE_FIELD", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH, price);
-        this.clickTextField("PICKUP_LOCATION_FIELD", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH, location);
+        this.writeTextField("PRICE_FIELD", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH, price);
+        this.writeTextField("PICKUP_LOCATION_FIELD", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH, location);
         waitForVisibilityOfElement("PICKUP_LOCATION_OPTION", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH,10);
         this.clickButton("PICKUP_LOCATION_OPTION", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         this.clickButton("POST_BUTTON", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        waitForVisibilityOfElement("VIEW_AD_PAGE", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH,30);
+        Assert.assertTrue(displayStatus("VIEW_AD_PAGE",LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH));
     }
 
     public void productUploadWithGallery(String productName, String price, String location) {
@@ -41,7 +46,7 @@ public class ProductUploadPage extends BasePage {
         this.clickButton("UPLOAD_BUTTON", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         this.clickButton("SELECT_FOLDER",LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         this.clickButton("SELECT_IMAGE",LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
-        waitForVisibilityOfElement("PRODUCT_NAME_FIELD", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH,30);
+        waitForVisibilityOfElement("PRODUCT_NAME_FIELD", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
         enterTextIfEmpty("PRODUCT_NAME_FIELD",LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH,productName);
         if(displayStatus("CATEGORY_FIELD_EMPTY",LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH)){
             this.clickButton("CATEGORY_FIELD", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
@@ -55,14 +60,16 @@ public class ProductUploadPage extends BasePage {
         this.clickButton("CONDITION_FIELD", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         this.clickButton("CONDITION_FIRST_OPTION", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         this.clickButton("NEXT_BUTTON", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
-        this.clickTextField("PRICE_FIELD", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH, price);
-        this.clickTextField("PICKUP_LOCATION_FIELD", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH, location);
+        this.writeTextField("PRICE_FIELD", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH, price);
+        this.writeTextField("PICKUP_LOCATION_FIELD", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH, location);
         waitForVisibilityOfElement("PICKUP_LOCATION_OPTION", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH,30);
         this.clickButton("PICKUP_LOCATION_OPTION", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         this.clickButton("POST_BUTTON", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        waitForVisibilityOfElement("VIEW_AD_PAGE", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH,30);
+        Assert.assertTrue(displayStatus("VIEW_AD_PAGE",LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH));
     }
 public void buyProduct(String productName){
-        this.clickTextField("SEARCH", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH, productName);
+        this.writeTextField("SEARCH", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH, productName);
 }
     public void uploadImagesToEmulator() {
         String assetsFolderPath = System.getProperty("user.dir") + "/src/test/resources/assets/images";

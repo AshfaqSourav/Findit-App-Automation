@@ -57,13 +57,8 @@ public class DeviceConfig {
     public static DesiredCapabilities getAndroidCapabilities() {
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability("appium:platformName", properties.getProperty("platformName"));
-//        capabilities.setCapability("appium:deviceName", properties.getProperty("deviceName"));
-//        capabilities.setCapability("appium:udid", properties.getProperty("udid"));
-//        capabilities.setCapability("appium:platformVersion", properties.getProperty("platformVersion"));
         capabilities.setCapability("appium:automationName", properties.getProperty("automationName"));
         capabilities.setCapability("appium:newCommandTimeout", Integer.parseInt(properties.getProperty("newCommandTimeout")));
-//        capabilities.setCapability("appium:app", System.getProperty("user.dir") + "/" + properties.getProperty("appPath"));
-//         Dynamically set the APK path based on the environment
         String apkPath;
         if (System.getenv("GITHUB_ACTIONS") != null) {
             // Running in GitHub Actions
@@ -74,10 +69,24 @@ public class DeviceConfig {
         }
 
         capabilities.setCapability("appium:app", apkPath);
-        capabilities.setCapability("appium:noReset", false);
-        capabilities.setCapability("appium:fullReset", true);
+        capabilities.setCapability("appium:uiautomator2ServerLaunchTimeout", 60000);
         capabilities.setCapability("appium:unicodeKeyboard", true);
         capabilities.setCapability("appium:autoGrantPermissions", true);
+//        capabilities.setCapability("appium:deviceName", properties.getProperty("deviceName"));
+//        capabilities.setCapability("appium:udid", properties.getProperty("udid"));
+//        capabilities.setCapability("appium:platformVersion", properties.getProperty("platformVersion"));
+//        capabilities.setCapability("appium:fullReset", true);
+//        capabilities.setCapability("appium:noReset", false);
+        capabilities.setCapability("appium:androidInstallTimeout", 90000);
+        capabilities.setCapability("appium:adbExecTimeout", 60000);
+        capabilities.setCapability("appium:uiautomator2ServerLaunchTimeout", 120000);
+        capabilities.setCapability("appium:uiautomator2ServerInstallTimeout", 120000);
+
+// ✅ Fix: Add a capability to skip hidden API restrictions (for Android 9+)
+//        capabilities.setCapability("appium:enforceAppInstall", true);
+//        capabilities.setCapability("appium:skipDeviceInitialization", true);
+//        capabilities.setCapability("appium:skipServerInstallation", false);
+//        capabilities.setCapability("appium:app", System.getProperty("user.dir") + "/" + properties.getProperty("appPath"));
         return capabilities;
     }
 

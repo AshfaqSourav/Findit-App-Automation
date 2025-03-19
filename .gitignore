@@ -33,3 +33,6 @@ test-output
 
 #appium server log
 appium_server_logs.txt
+
+failureScreenshots/
+test-recordings/

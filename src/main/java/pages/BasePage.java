@@ -1,5 +1,6 @@
 package pages;
 
+import com.google.common.collect.ImmutableMap;
 import config.DeviceConfig;
 import config.LocatorClassConfig;
 import enums.LocatorType;
@@ -21,14 +22,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+import java.io.*;
 import java.time.Duration;
 import java.util.Collections;
 
-import java.io.File;
 import java.lang.reflect.Field;
 import java.net.URL;
-
-
 
 public class BasePage {
 
@@ -47,6 +46,14 @@ public class BasePage {
 
         DesiredCapabilities capabilities = DeviceConfig.getDynamicCapabilities();
         String serverURL = DeviceConfig.properties.getProperty("serverURL") + "/wd/hub";
+        // **Add Chrome-Specific Capabilities to Disable First-Time Popups**
+        capabilities.setCapability("appium:chromeOptions", ImmutableMap.of(
+                "args", new String[]{
+                        "--no-first-run",          // Skips first-time setup
+                        "--disable-fre",           // Disables first-run experience
+                        "--disable-popup-blocking" // Ensures no unwanted popups
+                }
+        ));
         driver = new AppiumDriver(new URL(serverURL), capabilities);
         System.out.println("Driver initialized for platform: {}"+ platform);
     }
@@ -112,14 +119,30 @@ public class BasePage {
 
         return wait.until(ExpectedConditions.elementToBeClickable(locator));
     }
-    public WebElement waitForVisibilityOfElement(String locatorName, String locatorClass, LocatorType locatorType,int maximum_timeout) {
+
+//    public WebElement waitForVisibilityOfElement(String locatorName, String locatorClass, LocatorType locatorType,int maximum_timeout) {
+//    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(maximum_timeout));
+//    boolean isAndroid = "Android".equalsIgnoreCase(platform);
+//
+//    // Get the locator string using the class and field name
+//    String locatorValue = getLocator(locatorName, locatorClass);
+//
+//    // Get the dynamic locator based on locatorType
+//    By locator = getDynamicLocator(locatorType, locatorValue, isAndroid);
+//
+//    if (locator == null) {
+//        System.err.println("Invalid or unsupported locator type for platform: " + locatorType);
+//        throw new IllegalArgumentException("Invalid or unsupported locator type for platform: " + locatorType);
+//    }
+//
+//    // Wait for the element to be clickable
+//    return wait.until(ExpectedConditions.elementToBeClickable(locator));
+//}
+public void waitForVisibilityOfElement(String locatorName, String locatorClass, LocatorType locatorType, int maximum_timeout) {
     WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(maximum_timeout));
     boolean isAndroid = "Android".equalsIgnoreCase(platform);
 
-    // Get the locator string using the class and field name
     String locatorValue = getLocator(locatorName, locatorClass);
-
-    // Get the dynamic locator based on locatorType
     By locator = getDynamicLocator(locatorType, locatorValue, isAndroid);
 
     if (locator == null) {
@@ -127,10 +150,8 @@ public class BasePage {
         throw new IllegalArgumentException("Invalid or unsupported locator type for platform: " + locatorType);
     }
 
-    // Wait for the element to be clickable
-    return wait.until(ExpectedConditions.elementToBeClickable(locator));
+    wait.until(ExpectedConditions.elementToBeClickable(locator)); // Just wait, no return
 }
-
 
     private By getDynamicLocator(LocatorType locatorType, String locatorValue, boolean isAndroid) {
         switch (locatorType) {
@@ -239,7 +260,7 @@ public class BasePage {
     }
 }
 
-    public void clickTextField(String locatorName, String locatorClass, LocatorType locatorType, String text) {
+    public void writeTextField(String locatorName, String locatorClass, LocatorType locatorType, String text) {
         String locator = getLocator(locatorName, locatorClass);
         WebElement textField = waitUntilElementIsVisible(locatorType, locator);
         textField.click();
@@ -335,6 +356,48 @@ public class BasePage {
         BasePage.initializeDriver();
         System.out.println("12112");
     }
+
+    //Screen size of Pixel 9
+    private static final int REFERENCE_WIDTH = 1080;
+    private static final int REFERENCE_HEIGHT = 2424;
+    public static void performTapUsingReferencePoint(Point referencePoint ) {
+        // Get the current device screen dimensions
+        Dimension screenSize = driver.manage().window().getSize();
+        int actualWidth = screenSize.getWidth();
+        int actualHeight = screenSize.getHeight();
+
+        // Calculate percentages relative to Pixel 9 reference resolution
+        double xPercentage = (double) referencePoint.getX() / REFERENCE_WIDTH;
+        double yPercentage = (double) referencePoint.getY() / REFERENCE_HEIGHT;
+
+        // Convert the percentages into actual pixel coordinates for the current device
+        int actualX = (int) (xPercentage * actualWidth);
+        int actualY = (int) (yPercentage * actualHeight);
+
+        // Log calculations for debugging
+        System.out.println("Reference Point: " + referencePoint);
+        System.out.println("Screen Width: " + actualWidth + ", Screen Height: " + actualHeight);
+        System.out.println("Calculated Actual X: " + actualX + ", Actual Y: " + actualY);
+
+        // Perform the tap action using the calculated coordinates
+//        performTapAtCoordinates(actualX, actualY);
+    }
+
+//    private static void performTapAtCoordinates(int x, int y) {
+//        final PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+//        var tap = new Sequence(finger, 1);
+//
+//        tap.addAction(finger.createPointerMove(
+//                Duration.ofMillis(0),
+//                PointerInput.Origin.viewport(),
+//                x,
+//                y
+//        ));
+//        tap.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+//        tap.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+//
+//        driver.perform(Arrays.asList(tap));
+//    }
 }
 
 

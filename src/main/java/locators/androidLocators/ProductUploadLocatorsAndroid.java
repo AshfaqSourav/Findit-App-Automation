@@ -18,7 +18,7 @@ public class ProductUploadLocatorsAndroid {
     public static final String CATEGORY_FIRST_OPTION = "//android.view.View[contains(@content-desc, 'Ele')]";
     public static final String SUB_CATEGORY_FIELD_EMPTY = "//android.view.View[@content-desc=\"Pilih sub-kategori\" or @content-desc=\"Select sub category\"]";
     public static final String SUB_CATEGORY_FIELD = "(//android.widget.Button)[3]";
-    public static final String SUB_CATEGORY_FIRST_OPTION = "//android.view.View[contains(@content-desc, 'Gami')]";
+    public static final String SUB_CATEGORY_FIRST_OPTION = "//android.view.View[contains(@content-desc, 'Gam')]";
     public static final String CONDITION_FIELD = "//android.view.View[@content-desc=\"Pilih kondisi\" or @content-desc=\"Select condition\"]";
     public static final String CONDITION_FIRST_OPTION = "//android.view.View[contains(@content-desc, 'B')]";
     public static final String NEXT_BUTTON = "//android.widget.Button[@content-desc=\"Lanjutkan\" or @content-desc=\"Next\"]";
