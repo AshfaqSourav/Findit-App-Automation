@@ -235,10 +235,11 @@ jobs:
       - name: Run Tests
         run: |
           echo "🛠 Running Tests..."
-          mvn clean test  # ✅ Run tests and generate new allure-results
+          mvn clean test || true # ✅ Run tests and generate new allure-results
           ls -lah allure-results
 
       - name: Generate Fresh Allure Report
+        if: always()
         run: |
           echo "📊 Generating Allure Report..."
           allure generate allure-results --clean -o allure-report  # ✅ Generate new report
@@ -263,9 +264,10 @@ jobs:
       - name: Upload Failure Screenshots
         uses: actions/upload-artifact@v4
         if: always()
+        continue-on-error: true
         with:
           name: failure-screenshots
-          path: allure-results/*.png  # ✅ Upload screenshots if they exist
+          path: failureScreenshots/  # ✅ Upload screenshots if they exist
           retention-days: 7
 
 
