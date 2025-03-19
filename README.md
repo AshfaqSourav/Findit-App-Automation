@@ -6,7 +6,7 @@ This project is done to do UI testing of an android flutter app.
 To run the project, you’ll need to ensure following prerequisites as shown below:
 Android Setup & ios setup both can be set by following the video--
 
-https://www.youtube.com/playlist?list=PLhW3qG5bs-L8BQaqLpjt5792e8om6IR3k
+https://docs.google.com/document/d/e/2PACX-1vRnTmwDeynRlYUu9ib-jtkH7Ukas7TWyd0ww-aS6itEKjhXWCaGeI72fJ_0MIwrHG4oCK140Iv7iwBy/pub#h.f1eh23lg92jk
 
 ---
 
