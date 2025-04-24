@@ -52,6 +52,7 @@
             </run>
         </groups>
         <classes>
+            <class name="tests.UrlRedirectionTest"/>
 <!--            <class name="tests.ProductUploadTest"/>-->
             <class name="tests.LogoutTest"/>
         </classes>

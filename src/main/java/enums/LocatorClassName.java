@@ -5,8 +5,9 @@ package enums;
 
 	    LOGIN_LOCATOR_CLASS("LoginPage"),
 	    PRODUCT_UPLOAD_LOCATOR_CLASS("ProductUploadPage"),
-		LOGOUT_LOCATOR_CLASS("LogoutPage");
-	
+		LOGOUT_LOCATOR_CLASS("LogoutPage"),
+		URL_REDIRECTION_LOCATOR_CLASS("UrlRedirectionPage");
+
 	    private final String type;
 
 		LocatorClassName(String type) {

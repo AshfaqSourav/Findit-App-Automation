@@ -38,9 +38,8 @@ It will begin on the Appium server on Port number 4723.
 
 Step-2: Start appium server
 
-    1. terminal/cmd/bash -> appium
-    2. you can run individual tests or multiple tests at a time from testng.xml file.
-    3. you can run using groups eg mvn test -Dgroups=sanitySuite
+    1. you can run individual tests or multiple tests at a time from testng.xml file.
+    2. you can run using groups eg mvn test -Dgroups=sanitySuite
 
 ### How It Works?
 Test script sends a command (e.g., "Tap this button").

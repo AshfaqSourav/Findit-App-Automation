@@ -7,10 +7,7 @@ import org.testng.annotations.*;
 
 import config.DeviceConfig;
 import enums.Credentials;
-import pages.LoginPage;
-import pages.BasePage;
-import pages.LogoutPage;
-import pages.ProductUploadPage;
+import pages.*;
 import utils.ScreenRecordingUtils;
 import utils.ScreenshotUtils;
 
@@ -29,6 +26,7 @@ public class BaseTest {
     protected String productPrice;
     protected String productLocation;
     protected ProductUploadPage productUploadPage;
+    protected UrlRedirectionPage urlRedirectionPage;
 
 //    @BeforeMethod(alwaysRun = true)
 //    public void startScreenRecording() {
@@ -50,6 +48,7 @@ public class BaseTest {
         this.loginPage = new LoginPage(); // Pass driver instance to page classes
         this.productUploadPage = new ProductUploadPage(); // Pass driver instance to page classes
         this.logoutPage = new LogoutPage();
+        this.urlRedirectionPage = new UrlRedirectionPage();
         startScreenRecording();
     }
     private void startScreenRecording() {

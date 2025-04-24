@@ -51,7 +51,10 @@ public class BasePage {
                 "args", new String[]{
                         "--no-first-run",          // Skips first-time setup
                         "--disable-fre",           // Disables first-run experience
-                        "--disable-popup-blocking" // Ensures no unwanted popups
+                        "--disable-popup-blocking", // Ensures no unwanted popups
+                        "--disable-default-apps",      // Stops auto-launch of Play Store
+                        "--disable-infobars",          // Removes infobar messages
+                        "--disable-component-update"   // Prevents background component updates
                 }
         ));
         driver = new AppiumDriver(new URL(serverURL), capabilities);
@@ -89,37 +92,85 @@ public class BasePage {
         return platform;
     }
 
-    protected String getLocator(String locatorFieldName, String pageName) {
+//    protected String getLocator(String locatorFieldName, String pageName) {
+//        try {
+//            Class<?> locatorClass = getPlatform().equalsIgnoreCase("Android")
+//                    ? LocatorClassConfig.androidLocators.get(pageName)
+//                    : LocatorClassConfig.iosLocators.get(pageName);
+//
+//            if (locatorClass == null) {
+//                throw new RuntimeException("No locator class found for page: " + pageName + " on platform: " + getPlatform());
+//            }
+//
+//            Field field = locatorClass.getDeclaredField(locatorFieldName);
+//            return (String) field.get(null);
+//        } catch (NoSuchFieldException | IllegalAccessException e) {
+//            logger.error("Locator not found: {} in page: {}", locatorFieldName, pageName, e);
+//            throw new RuntimeException("Locator not found: " + locatorFieldName + " in page: " + pageName, e);
+//        }
+//    }
+protected Object getLocator(String locatorFieldName, String pageName) {
+    try {
+        Class<?> locatorClass = getPlatform().equalsIgnoreCase("Android")
+                ? LocatorClassConfig.androidLocators.get(pageName)
+                : LocatorClassConfig.iosLocators.get(pageName);
+
+        if (locatorClass == null) {
+            throw new RuntimeException("No locator class found for page: " + pageName + " on platform: " + getPlatform());
+        }
+
+        Field field = locatorClass.getDeclaredField(locatorFieldName);
+        field.setAccessible(true); // Ensure access to static field
+        return field.get(null);    // Can be String or Point
+
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+        logger.error("Locator not found: {} in page: {}", locatorFieldName, pageName, e);
+        throw new RuntimeException("Locator not found: " + locatorFieldName + " in page: " + pageName, e);
+    }
+}
+
+    public static void forceOffline() {
         try {
-            Class<?> locatorClass = getPlatform().equalsIgnoreCase("Android")
-                    ? LocatorClassConfig.androidLocators.get(pageName)
-                    : LocatorClassConfig.iosLocators.get(pageName);
-
-            if (locatorClass == null) {
-                throw new RuntimeException("No locator class found for page: " + pageName + " on platform: " + getPlatform());
-            }
-
-            Field field = locatorClass.getDeclaredField(locatorFieldName);
-            return (String) field.get(null);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            logger.error("Locator not found: {} in page: {}", locatorFieldName, pageName, e);
-            throw new RuntimeException("Locator not found: " + locatorFieldName + " in page: " + pageName, e);
+            Runtime.getRuntime().exec("adb shell svc wifi disable");
+            Runtime.getRuntime().exec("adb shell svc data disable");
+            System.out.println("📴 Internet disabled (Wi-Fi + Mobile Data)");
+        } catch (Exception e) {
+            System.out.println("❌ Failed to disable network: " + e.getMessage());
         }
     }
-
+    public static void forceOnline() {
+        try {
+            Runtime.getRuntime().exec("adb shell svc wifi enable");
+            Runtime.getRuntime().exec("adb shell svc data enable");
+            System.out.println("📶 Internet enabled (Wi-Fi + Mobile Data)");
+        } catch (Exception e) {
+            System.out.println("❌ Failed to enable network: " + e.getMessage());
+        }
+    }
     public WebElement waitUntilElementIsVisible(LocatorType locatorType, String locatorValue) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
         boolean isAndroid = "Android".equalsIgnoreCase(platform);
 
         By locator = getDynamicLocator(locatorType, locatorValue, isAndroid);
         if (locator == null) {
-            logger.error("Invalid or unsupported locator type for platform: {}", locatorType);
+            System.out.println("Invalid or unsupported locator type for platform: " + locatorType);
             throw new IllegalArgumentException("Invalid or unsupported locator type for platform: " + locatorType);
         }
 
         return wait.until(ExpectedConditions.elementToBeClickable(locator));
     }
+    public boolean waitUntilElementIsInvisible(LocatorType locatorType, String locatorValue) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+        boolean isAndroid = "Android".equalsIgnoreCase(platform);
 
+        By locator = getDynamicLocator(locatorType, locatorValue, isAndroid);
+        if (locator == null) {
+            System.out.println("Invalid or unsupported locator type for platform: " + locatorType);
+            throw new IllegalArgumentException("Invalid or unsupported locator type for platform: " + locatorType);
+        }
+
+        return wait.until(ExpectedConditions.invisibilityOfElementLocated(locator));
+    }
 //    public WebElement waitForVisibilityOfElement(String locatorName, String locatorClass, LocatorType locatorType,int maximum_timeout) {
 //    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(maximum_timeout));
 //    boolean isAndroid = "Android".equalsIgnoreCase(platform);
@@ -142,7 +193,7 @@ public void waitForVisibilityOfElement(String locatorName, String locatorClass, 
     WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(maximum_timeout));
     boolean isAndroid = "Android".equalsIgnoreCase(platform);
 
-    String locatorValue = getLocator(locatorName, locatorClass);
+    String locatorValue = (String) getLocator(locatorName, locatorClass);
     By locator = getDynamicLocator(locatorType, locatorValue, isAndroid);
 
     if (locator == null) {
@@ -152,6 +203,20 @@ public void waitForVisibilityOfElement(String locatorName, String locatorClass, 
 
     wait.until(ExpectedConditions.elementToBeClickable(locator)); // Just wait, no return
 }
+    public void waitForInvisibilityOfElement(String locatorName, String locatorClass, LocatorType locatorType, int maximum_timeout) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(maximum_timeout));
+        boolean isAndroid = "Android".equalsIgnoreCase(platform);
+
+        String locatorValue = (String) getLocator(locatorName, locatorClass);
+        By locator = getDynamicLocator(locatorType, locatorValue, isAndroid);
+
+        if (locator == null) {
+            System.out.println("Invalid or unsupported locator type for platform: " + locatorType);
+            throw new IllegalArgumentException("Invalid or unsupported locator type for platform: " + locatorType);
+        }
+
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(locator)); // Just wait, no return
+    }
 
     private By getDynamicLocator(LocatorType locatorType, String locatorValue, boolean isAndroid) {
         switch (locatorType) {
@@ -240,11 +305,23 @@ public void waitForVisibilityOfElement(String locatorName, String locatorClass, 
         }
     }
 
-    public void clickButton(String locatorName, String locatorClass, LocatorType locatorType) {
-        String locator = getLocator(locatorName, locatorClass);
-        WebElement button = waitUntilElementIsVisible(locatorType, locator);
+//    public void clickButton(String locatorName, String locatorClass, LocatorType locatorType) {
+//        String locator = getLocator(locatorName, locatorClass);
+//        WebElement button = waitUntilElementIsVisible(locatorType, locator);
+//        button.click();
+//    }
+public void clickButton(String locatorName, String locatorClass, LocatorType locatorType) {
+    Object locator = getLocator(locatorName, locatorClass);
+
+    if (locator instanceof String) {
+        WebElement button = waitUntilElementIsVisible(locatorType, (String) locator);
         button.click();
+    } else if (locator instanceof Point) {
+        performTapUsingReferencePoint((Point) locator);
+    } else {
+        throw new IllegalArgumentException("Unsupported locator type: " + locator.getClass());
     }
+}
 
 //    public WebElement getElement(String locatorName, String locatorClass, LocatorType locatorType) {
 //        String locator = getLocator(locatorName, locatorClass);
@@ -252,7 +329,7 @@ public void waitForVisibilityOfElement(String locatorName, String locatorClass, 
 //    }
     public WebElement getElement(String locatorName, String locatorClass, LocatorType locatorType) {
     try {
-        String locator = getLocator(locatorName, locatorClass);
+        String locator = (String) getLocator(locatorName, locatorClass);
         return waitUntilElementIsVisible(locatorType, locator);
     } catch (NoSuchElementException e) {
         System.out.println("Element not found: " + locatorName);
@@ -260,14 +337,31 @@ public void waitForVisibilityOfElement(String locatorName, String locatorClass, 
     }
 }
 
-    public void writeTextField(String locatorName, String locatorClass, LocatorType locatorType, String text) {
-        String locator = getLocator(locatorName, locatorClass);
-        WebElement textField = waitUntilElementIsVisible(locatorType, locator);
+//    public void writeTextField(String locatorName, String locatorClass, LocatorType locatorType, String text) {
+//        String locator = (String) getLocator(locatorName, locatorClass);
+//        WebElement textField = waitUntilElementIsVisible(locatorType, locator);
+//        textField.click();
+//        textField.clear();
+//        textField.sendKeys(text);
+//        hideKeyboard();
+//    }
+public void writeTextField(String locatorName, String locatorClass, LocatorType locatorType, String text) throws IOException {
+    Object locator = getLocator(locatorName, locatorClass);
+
+    if (locator instanceof String) {
+        WebElement textField = waitUntilElementIsVisible(locatorType, (String) locator);
         textField.click();
         textField.clear();
         textField.sendKeys(text);
         hideKeyboard();
+    } else if (locator instanceof Point) {
+        performTapUsingReferencePoint((Point) locator);
+        Runtime.getRuntime().exec("adb shell input text '" + text.replace(" ", "%s") + "'");
+        hideKeyboard();
+    } else {
+        throw new IllegalArgumentException("Unsupported locator type: " + locator.getClass());
     }
+}
 
     public void scrollHalfway() {
         Dimension size = driver.manage().window().getSize();
@@ -305,7 +399,7 @@ public void waitForVisibilityOfElement(String locatorName, String locatorClass, 
     public boolean displayStatus(String locatorName, String locatorClass, LocatorType locatorType) {
         try {
             // Get the locator value dynamically
-            String locatorValue = getLocator(locatorName, locatorClass);
+            String locatorValue = (String) getLocator(locatorName, locatorClass);
             if (locatorValue == null || locatorValue.isEmpty()) {
                 System.out.println("Locator value not found for " + locatorName + " in class " + locatorClass);
                 return false;
@@ -354,12 +448,12 @@ public void waitForVisibilityOfElement(String locatorName, String locatorClass, 
     public static void restartFreshApp() throws Exception {
         driver.quit();
         BasePage.initializeDriver();
-        System.out.println("12112");
+        System.out.println("App restarted");
     }
-
-    //Screen size of Pixel 9
+    //    public Point BREAK_TIME_TAB_CHILD1_POINT = new Point(954, 585); this how to implement it
+    //Screen size of Pixel 6
     private static final int REFERENCE_WIDTH = 1080;
-    private static final int REFERENCE_HEIGHT = 2424;
+    private static final int REFERENCE_HEIGHT = 2400;
     public static void performTapUsingReferencePoint(Point referencePoint ) {
         // Get the current device screen dimensions
         Dimension screenSize = driver.manage().window().getSize();
@@ -379,25 +473,20 @@ public void waitForVisibilityOfElement(String locatorName, String locatorClass, 
         System.out.println("Screen Width: " + actualWidth + ", Screen Height: " + actualHeight);
         System.out.println("Calculated Actual X: " + actualX + ", Actual Y: " + actualY);
 
-        // Perform the tap action using the calculated coordinates
-//        performTapAtCoordinates(actualX, actualY);
+//         Perform the tap action using the calculated coordinates
+        performTapAtCoordinates(actualX, actualY);
     }
 
-//    private static void performTapAtCoordinates(int x, int y) {
-//        final PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
-//        var tap = new Sequence(finger, 1);
-//
-//        tap.addAction(finger.createPointerMove(
-//                Duration.ofMillis(0),
-//                PointerInput.Origin.viewport(),
-//                x,
-//                y
-//        ));
-//        tap.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
-//        tap.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-//
-//        driver.perform(Arrays.asList(tap));
-//    }
+    private static void performTapAtCoordinates(int x, int y) {
+        PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+        Sequence tap = new Sequence(finger, 1);
+
+        tap.addAction(finger.createPointerMove(Duration.ofMillis(0), PointerInput.Origin.viewport(), x, y));
+        tap.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+        tap.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+
+        driver.perform(Collections.singletonList(tap));
+    }
 }
 
 

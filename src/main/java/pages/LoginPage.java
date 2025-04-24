@@ -6,6 +6,8 @@ import enums.LocatorType;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 
+import java.io.IOException;
+
 
 public class LoginPage extends BasePage {
 
@@ -13,10 +15,10 @@ public class LoginPage extends BasePage {
         super();
     }
 
-    public void LoginWithEmail(String email) {
+    public void LoginWithEmail(String email) throws IOException {
         System.out.println("sdfd");
         System.out.println(BasePage.driver.getPageSource());
-        waitForVisibilityOfElement("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,40);
+        waitForVisibilityOfElement("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
         System.out.println("visible continue with email");
         this.clickButton("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         System.out.println("Clicked continue with email");
@@ -39,7 +41,8 @@ public class LoginPage extends BasePage {
         System.out.println("Verify button clicked");
         this.clickButton("TURN_ON_NOTIFICATION_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         System.out.println("ton button clicked");
-        waitForVisibilityOfElement("PROFILE_BUTTON", LocatorClassName.LOGOUT_LOCATOR_CLASS.toString(), LocatorType.XPATH,10);
+        this.sleep(3000);
+        waitForVisibilityOfElement("PROFILE_BUTTON", LocatorClassName.LOGOUT_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
         System.out.println("visible profile button");
     }
 
@@ -47,7 +50,7 @@ public class LoginPage extends BasePage {
     public void enterOtp(String... otps) {
         for (int i = 0; i < otps.length; i++) {
             String locatorKey = "LOGIN_EMAIL_OTP_" + (i + 1); // Dynamically construct locator key
-            String locator = getLocator(locatorKey, LocatorClassName.LOGIN_LOCATOR_CLASS.toString());
+            String locator = (String) getLocator(locatorKey, LocatorClassName.LOGIN_LOCATOR_CLASS.toString());
             WebElement otpField = waitUntilElementIsVisible(LocatorType.XPATH, locator); // Use WebElement
             System.out.println("otp box visible");
             otpField.click();
