@@ -15,14 +15,12 @@ public class LoginPage extends BasePage {
         super();
     }
 
-    public void LoginWithEmail(String email) throws IOException {
-        System.out.println("sdfd");
+    public void LoginWithEmail(String email) {
         System.out.println(BasePage.driver.getPageSource());
         waitForVisibilityOfElement("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
         System.out.println("visible continue with email");
         this.clickButton("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         System.out.println("Clicked continue with email");
-        System.out.println(BasePage.driver.getPageSource());
         waitForVisibilityOfElement("LOGIN_EMAIL_TEXT", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
         System.out.println("visible txt");
         this.writeTextField("LOGIN_EMAIL_TEXT", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH, email);
@@ -61,5 +59,97 @@ public class LoginPage extends BasePage {
             System.out.println("otp box value entered"+otps[i]);
         }
         hideKeyboard();
+    }
+
+    public void emailInputEmpty (){
+        waitForVisibilityOfElement("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
+        System.out.println("visible continue with email");
+        this.clickButton("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        System.out.println("Clicked continue with email");
+        this.clickButton("LOGIN_EMAIL_NEXT_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        Assert.assertTrue(displayStatus("EMAIL_EMPTY_INVALID_MESSAGE", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH));
+
+    }
+    public void emailInputInvalidText () {
+        waitForVisibilityOfElement("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
+        System.out.println("visible continue with email");
+        this.clickButton("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        System.out.println("Clicked continue with email");
+        this.writeTextField("LOGIN_EMAIL_TEXT", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH, "abc");
+        System.out.println("Email Entered");
+        this.clickButton("LOGIN_EMAIL_NEXT_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        Assert.assertTrue(displayStatus("EMAIL_INVALID_INPUT_MESSAGE", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH));
+    }
+    public void emailInputInvalidText2 (){
+        waitForVisibilityOfElement("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
+        System.out.println("visible continue with email");
+        this.clickButton("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        System.out.println("Clicked continue with email");
+        this.writeTextField("LOGIN_EMAIL_TEXT", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH, "abc@gmail");
+        System.out.println("Email Entered");
+        this.clickButton("LOGIN_EMAIL_NEXT_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        Assert.assertTrue(displayStatus("EMAIL_INVALID_INPUT_MESSAGE2", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH));
+    }
+    public void emailInputInvalidText3 (){
+        waitForVisibilityOfElement("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
+        System.out.println("visible continue with email");
+        this.clickButton("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        System.out.println("Clicked continue with email");
+        this.writeTextField("LOGIN_EMAIL_TEXT", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH, " ");
+        System.out.println("Email Entered");
+        this.clickButton("LOGIN_EMAIL_NEXT_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        Assert.assertTrue(displayStatus("EMAIL_INVALID_INPUT_MESSAGE", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH));
+    }
+    public void otpInputEmpty (String email){
+        waitForVisibilityOfElement("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
+        System.out.println("visible continue with email");
+        this.clickButton("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        System.out.println("Clicked continue with email");
+        this.writeTextField("LOGIN_EMAIL_TEXT", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,email);
+        System.out.println("Email Entered");
+        this.clickButton("LOGIN_EMAIL_NEXT_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        waitForVisibilityOfElement("LOGIN_EMAIL_VERIFY_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
+        this.clickButton("LOGIN_EMAIL_VERIFY_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        System.out.println("Verify button clicked");
+        Assert.assertTrue(displayStatus("OTP_INVALID_MESSAGE", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH));
+    }
+    public void otpInputInvalid (String email){
+        waitForVisibilityOfElement("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
+        System.out.println("visible continue with email");
+        this.clickButton("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        System.out.println("Clicked continue with email");
+        this.writeTextField("LOGIN_EMAIL_TEXT", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,email);
+        System.out.println("Email Entered");
+        this.clickButton("LOGIN_EMAIL_NEXT_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        waitForVisibilityOfElement("LOGIN_EMAIL_VERIFY_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
+        this.enterOtp(
+                DeviceConfig.properties.getProperty("login.password1"),
+                DeviceConfig.properties.getProperty("login.password2"),
+                DeviceConfig.properties.getProperty("login.password3")
+        );
+        this.clickButton("LOGIN_EMAIL_VERIFY_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        System.out.println("Verify button clicked");
+        Assert.assertTrue(displayStatus("OTP_INVALID_MESSAGE", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH));
+    }
+    public void otpInvalidInput2 (String email){
+        waitForVisibilityOfElement("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
+        System.out.println("visible continue with email");
+        this.clickButton("LOGIN_WITH_EMAIL_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        System.out.println("Clicked continue with email");
+        this.writeTextField("LOGIN_EMAIL_TEXT", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,email);
+        System.out.println("Email Entered");
+        this.clickButton("LOGIN_EMAIL_NEXT_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        waitForVisibilityOfElement("LOGIN_EMAIL_VERIFY_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
+        this.enterOtp(
+                DeviceConfig.properties.getProperty("login.password1"),
+                DeviceConfig.properties.getProperty("login.password2"),
+                DeviceConfig.properties.getProperty("login.password3"),
+                DeviceConfig.properties.getProperty("login.password4"),
+                DeviceConfig.properties.getProperty("login.password5"),
+                DeviceConfig.properties.getProperty("login.password7")
+        );
+        this.clickButton("LOGIN_EMAIL_VERIFY_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        System.out.println("Verify button clicked");
+        Assert.assertTrue(displayStatus("OTP_INVALID_MESSAGE2", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH));
     }
 }
