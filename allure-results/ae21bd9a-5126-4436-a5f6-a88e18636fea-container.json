@@ -1,0 +1,1 @@
+{"uuid":"ae21bd9a-5126-4436-a5f6-a88e18636fea","name":"tests.LoginPageTest","children":["d1c6d389-e929-42ef-869c-13c06f603bc2"],"befores":[],"afters":[{"name":"quitDriver","status":"passed","stage":"finished","description":"","steps":[],"attachments":[],"parameters":[],"start":1744001930368,"stop":1744001930369}],"start":1744001904509,"stop":1744001930372}

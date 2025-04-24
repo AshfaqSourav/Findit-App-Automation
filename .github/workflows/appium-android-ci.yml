@@ -107,15 +107,15 @@ jobs:
       - name: Ensure Target Directory Exists
         run: |
           mkdir -p /home/runner/work/Findit-App/
-          cp src/test/resources/apps/V1.2.2.apk /home/runner/work/Findit-App/V1.2.2.apk
+          cp src/test/resources/apps/findit.apk /home/runner/work/Findit-App/findit.apk
           uname -m
 
       - name: Verify APK Existence
         run: |
-          if [ -f src/test/resources/apps/V1.2.2.apk ]; then
+          if [ -f src/test/resources/apps/findit.apk ]; then
             echo "✅ APK found!"
-            file src/test/resources/apps/V1.2.2.apk  # Check if it's a valid APK
-            ls -lh src/test/resources/apps/V1.2.2.apk
+            file src/test/resources/apps/findit.apk  # Check if it's a valid APK
+            ls -lh src/test/resources/apps/findit.apk
             else
             echo "❌ APK NOT FOUND!"
             exit 1
@@ -123,8 +123,8 @@ jobs:
 
       - name: Debug APK Path and Permissions
         run: |
-          ls -lah /home/runner/work/Findit-App/V1.2.2.apk
-          file /home/runner/work/Findit-App/V1.2.2.apk
+          ls -lah /home/runner/work/Findit-App/findit.apk
+          file /home/runner/work/Findit-App/findit.apk
 
       # ✅ Cache Allure CLI (Prevents downloading Allure every run)
       - name: Cache Allure CLI
