@@ -87,19 +87,14 @@ public static String detectPlatform() {
         return false;
     }
 
-
-
     public static DesiredCapabilities getDynamicCapabilities() {
         return getCapabilities(detectPlatform());
     }
 
     private static DesiredCapabilities getAndroidCapabilities() {
         DesiredCapabilities capabilities = new DesiredCapabilities();
-
         capabilities.setCapability("appium:platformName", properties.getProperty("platformName"));
         capabilities.setCapability("appium:automationName", properties.getProperty("automationName"));
-        capabilities.setCapability("appium:newCommandTimeout", Integer.parseInt(properties.getProperty("newCommandTimeout")));
-
         String apkPath = System.getenv("GITHUB_ACTIONS") != null
                 ? "/home/runner/work/Findit-App/findit.apk"
                 : System.getProperty("user.dir") + "/" + properties.getProperty("appPath");
@@ -109,27 +104,36 @@ public static String detectPlatform() {
         capabilities.setCapability("appium:uiautomator2ServerLaunchTimeout", 120000);
         capabilities.setCapability("appium:unicodeKeyboard", true);
         capabilities.setCapability("appium:autoGrantPermissions", true);
-        capabilities.setCapability("appium:adbExecTimeout", 60000);
-        capabilities.setCapability("appium:androidInstallTimeout", 90000);
-        capabilities.setCapability("appium:uiautomator2ServerInstallTimeout", 120000);
-        capabilities.setCapability("appium:ignoreHiddenApiPolicyError", true);
         capabilities.setCapability("appium:appPackage", "com.findit.id");
         capabilities.setCapability("appium:appActivity", "com.findit.id.MainActivity");
-
+        capabilities.setCapability("appium:newCommandTimeout", 0);
+        capabilities.setCapability("appium:noReset", false);
+        capabilities.setCapability("appium:androidInstallTimeout", 90000);
+        capabilities.setCapability("appium:adbExecTimeout", 60000);
+        capabilities.setCapability("appium:uiautomator2ServerLaunchTimeout", 120000);
+        capabilities.setCapability("appium:uiautomator2ServerInstallTimeout", 120000);
+        capabilities.setCapability("appium:ignoreHiddenApiPolicyError", true);
+//        capabilities.setCapability("appium:deviceName", properties.getProperty("deviceName"));
+//        capabilities.setCapability("appium:udid", properties.getProperty("udid"));
+//        capabilities.setCapability("appium:platformVersion", properties.getProperty("platformVersion"));
+//        capabilities.setCapability("appium:newCommandTimeout", Integer.parseInt(properties.getProperty("newCommandTimeout")));
+//        capabilities.setCapability("appium:fullReset", true);
+// ✅ Fix: Add a capability to skip hidden API restrictions (for Android 9+)
+//        capabilities.setCapability("appium:enforceAppInstall", true);
+//        capabilities.setCapability("appium:skipDeviceInitialization", true);
+//        capabilities.setCapability("appium:skipServerInstallation", false);
+//        capabilities.setCapability("appium:app", System.getProperty("user.dir") + "/" + properties.getProperty("appPath"));
         return capabilities;
     }
 
     private static DesiredCapabilities getIOSCapabilities() {
         DesiredCapabilities capabilities = new DesiredCapabilities();
-
         capabilities.setCapability("appium:platformName", properties.getProperty("iosPlatformName"));
         capabilities.setCapability("appium:deviceName", properties.getProperty("iosDeviceName"));
         capabilities.setCapability("appium:automationName", properties.getProperty("iosAutomationName"));
         capabilities.setCapability("appium:udid", properties.getProperty("iosUdid"));
         capabilities.setCapability("appium:bundleId", properties.getProperty("iosBundleId"));
         capabilities.setCapability("appium:platformVersion", properties.getProperty("iosPlatformVersion"));
-        capabilities.setCapability("appium:wdaLaunchTimeout", 60000);
-        capabilities.setCapability("appium:wdaConnectionTimeout", 60000);
         capabilities.setCapability("appium:clearSystemFiles", true);
         capabilities.setCapability("appium:autoAcceptAlerts", true);
         capabilities.setCapability("appium:unicodeKeyboard", true);
@@ -138,6 +142,8 @@ public static String detectPlatform() {
         capabilities.setCapability("appium:autoGrantPermissions", true);
         capabilities.setCapability("appium:usePrebuiltApp", true);
         capabilities.setCapability("appium:resetOnLaunch", true);
+        capabilities.setCapability("appium:wdaLaunchTimeout", 60000);
+        capabilities.setCapability("appium:wdaConnectionTimeout", 60000);
         capabilities.setCapability("appium:newCommandTimeout", 300);
         return capabilities;
     }

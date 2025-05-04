@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class ScreenRecordingUtils {
 
@@ -72,6 +73,15 @@ public class ScreenRecordingUtils {
             e.printStackTrace();
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+    public static void startScreenRecording() {
+        try {
+            System.out.println("🎥 Starting screen recording via ADB...");
+            Runtime.getRuntime().exec("adb shell screenrecord /sdcard/test_video.mp4");
+            TimeUnit.SECONDS.sleep(2); // Give it some time to start recording
+        } catch (IOException | InterruptedException e) {
+            System.out.println("❌ Failed to start screen recording: " + e.getMessage());
         }
     }
 }
