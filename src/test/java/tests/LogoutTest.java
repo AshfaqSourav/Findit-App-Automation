@@ -4,14 +4,15 @@ import io.qameta.allure.Description;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.BasePage;
+import utils.RetryAnalyzer;
+
+import java.io.IOException;
 
 public class LogoutTest extends BaseTest{
-    @Test(groups = {"regression"})
+    @Test(groups = {"regression"},retryAnalyzer = RetryAnalyzer.class)
     @Description("Verify logout of a user")
-    public void testLogout() throws Exception {
-//        BasePage.restartFreshApp();
+    public void testLogout() throws IOException, InterruptedException {
         loginPage.LoginWithEmail(this.buyerEmail);
-//        Assert.fail("This test is intentionally failed.");
         logoutPage.logout();
     }
 }

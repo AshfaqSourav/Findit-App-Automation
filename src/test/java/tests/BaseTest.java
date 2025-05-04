@@ -26,19 +26,9 @@ public class BaseTest {
     protected String productPrice;
     protected String productLocation;
     protected ProductUploadPage productUploadPage;
+    protected LanguageChangePage languageChangePage;
     protected UrlRedirectionPage urlRedirectionPage;
-
-//    @BeforeMethod(alwaysRun = true)
-//    public void startScreenRecording() {
-//        try {
-//            System.out.println("🎥 Starting screen recording via ADB...");
-//            Runtime.getRuntime().exec("adb shell screenrecord /sdcard/test_video.mp4");
-//            TimeUnit.SECONDS.sleep(2); // Give it some time to start recording
-//        } catch (IOException | InterruptedException e) {
-//            System.out.println("❌ Failed to start screen recording: " + e.getMessage());
-//        }
-//    }
-
+    protected VerifyLoginPopupOnActionByLoggedOutUserPage verifyLoginPopupOnActionByLoggedOutUserPage;
     @BeforeMethod(alwaysRun = true)
     @Parameters("platformName") // TestNG parameter
     public void setup() throws Exception {
@@ -46,19 +36,12 @@ public class BaseTest {
         driver = BasePage.driver; // Assign driver to local instance
         this.setCredential();
         this.loginPage = new LoginPage(); // Pass driver instance to page classes
-        this.productUploadPage = new ProductUploadPage(); // Pass driver instance to page classes
+        this.productUploadPage = new ProductUploadPage();
         this.logoutPage = new LogoutPage();
         this.urlRedirectionPage = new UrlRedirectionPage();
-        startScreenRecording();
-    }
-    private void startScreenRecording() {
-        try {
-            System.out.println("🎥 Starting screen recording via ADB...");
-            Runtime.getRuntime().exec("adb shell screenrecord /sdcard/test_video.mp4");
-            TimeUnit.SECONDS.sleep(2); // Give it some time to start recording
-        } catch (IOException | InterruptedException e) {
-            System.out.println("❌ Failed to start screen recording: " + e.getMessage());
-        }
+        this.languageChangePage = new LanguageChangePage();
+        this.verifyLoginPopupOnActionByLoggedOutUserPage = new VerifyLoginPopupOnActionByLoggedOutUserPage();
+        ScreenRecordingUtils.startScreenRecording();
     }
 
     public void setCredential() {

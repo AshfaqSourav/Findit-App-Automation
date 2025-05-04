@@ -13,6 +13,10 @@ public class UrlRedirectionPage extends BasePage{
     }
 
     public void loginPopupTermsAndCondition() {
+        if(displayStatus("UPDATE_POPUP", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,5)){
+            waitForVisibilityOfElement("UPDATE_POPUP_LATER_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
+            this.clickButton("UPDATE_POPUP_LATER_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        }
         waitForVisibilityOfElement("LOGIN_POPUP", LocatorClassName.LOGOUT_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
         waitForVisibilityOfElement("LOGINPOPUP_TERMSANDCONDITION_LINK", LocatorClassName.URL_REDIRECTION_LOCATOR_CLASS.toString(), LocatorType.XPATH, 60);
         this.clickButton("LOGINPOPUP_TERMSANDCONDITION_LINK", LocatorClassName.URL_REDIRECTION_LOCATOR_CLASS.toString(), LocatorType.XPATH);
@@ -25,6 +29,10 @@ public class UrlRedirectionPage extends BasePage{
         this.clickButton("BACK_BUTTON", LocatorClassName.URL_REDIRECTION_LOCATOR_CLASS.toString(), LocatorType.XPATH);
     }
     public void loginPopupPrivacyAndPolicy() {
+        if(displayStatus("UPDATE_POPUP", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,5)){
+            waitForVisibilityOfElement("UPDATE_POPUP_LATER_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
+            this.clickButton("UPDATE_POPUP_LATER_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        }
         waitForVisibilityOfElement("LOGINPOPUP_PRIVACYPOLICY_LINK", LocatorClassName.URL_REDIRECTION_LOCATOR_CLASS.toString(), LocatorType.XPATH, 60);
         this.clickButton("LOGINPOPUP_PRIVACYPOLICY_LINK", LocatorClassName.URL_REDIRECTION_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         waitForVisibilityOfElement("PRIVACYPOLICY_TEXT_PAGEVIEW", LocatorClassName.URL_REDIRECTION_LOCATOR_CLASS.toString(), LocatorType.XPATH, 60);
@@ -36,6 +44,10 @@ public class UrlRedirectionPage extends BasePage{
         this.clickButton("BACK_BUTTON", LocatorClassName.URL_REDIRECTION_LOCATOR_CLASS.toString(), LocatorType.XPATH);
     }
     public void loginPopupEula() {
+        if(displayStatus("UPDATE_POPUP", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,5)){
+            waitForVisibilityOfElement("UPDATE_POPUP_LATER_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
+            this.clickButton("UPDATE_POPUP_LATER_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        }
         waitForVisibilityOfElement("LOGINPOPUP_EULA_LINK", LocatorClassName.URL_REDIRECTION_LOCATOR_CLASS.toString(), LocatorType.XPATH, 60);
         this.clickButton("LOGINPOPUP_EULA_LINK", LocatorClassName.URL_REDIRECTION_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         waitForVisibilityOfElement("EULA_TEXT_PAGEVIEW", LocatorClassName.URL_REDIRECTION_LOCATOR_CLASS.toString(), LocatorType.XPATH, 60);
@@ -94,6 +106,9 @@ public class UrlRedirectionPage extends BasePage{
     public void whatsappLink(){
         waitForVisibilityOfElement("WHATSAPP_LINK", LocatorClassName.URL_REDIRECTION_LOCATOR_CLASS.toString(), LocatorType.XPATH, 60);
         this.clickButton("WHATSAPP_LINK", LocatorClassName.URL_REDIRECTION_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        if(displayStatus("CHROME_USE_ANOTHER_ACCOUNT_BUTTON", LocatorClassName.URL_REDIRECTION_LOCATOR_CLASS.toString(), LocatorType.XPATH,20)){
+            this.clickButton("CHROME_USE_ANOTHER_ACCOUNT_BUTTON", LocatorClassName.URL_REDIRECTION_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        }
 //        try {
 //            // Wait for the Chrome first-run screen
 //            waitForVisibilityOfElement("CHROME", LocatorClassName.URL_REDIRECTION_LOCATOR_CLASS.toString(), LocatorType.XPATH, 60);
@@ -136,6 +151,10 @@ public class UrlRedirectionPage extends BasePage{
         }
     }
     public void noInternetToast(){
+        if(displayStatus("UPDATE_POPUP", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,5)){
+            waitForVisibilityOfElement("UPDATE_POPUP_LATER_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
+            this.clickButton("UPDATE_POPUP_LATER_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        }
         waitForVisibilityOfElement("LOGIN_POPUP", LocatorClassName.LOGOUT_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
         BasePage.forceOffline();
         waitForVisibilityOfElement("NO_INTERNET_TOAST", LocatorClassName.URL_REDIRECTION_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
@@ -145,6 +164,10 @@ public class UrlRedirectionPage extends BasePage{
         this.sleep(4000);
     }
     public void noInternetPage() throws Exception {
+        if(displayStatus("UPDATE_POPUP", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,5)){
+            waitForVisibilityOfElement("UPDATE_POPUP_LATER_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
+            this.clickButton("UPDATE_POPUP_LATER_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        }
         BasePage.forceOffline();
         BasePage.restartFreshApp();
         waitForVisibilityOfElement("NO_INTERNET_TOAST", LocatorClassName.URL_REDIRECTION_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
@@ -154,6 +177,10 @@ public class UrlRedirectionPage extends BasePage{
         this.sleep(4000);
     }
     public void sellItGuide(){
+        if(displayStatus("UPDATE_POPUP", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,5)){
+            waitForVisibilityOfElement("UPDATE_POPUP_LATER_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
+            this.clickButton("UPDATE_POPUP_LATER_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        }
         waitForVisibilityOfElement("LOGIN_POPUP", LocatorClassName.LOGOUT_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
         this.clickButton("SKIP_BUTTON", LocatorClassName.URL_REDIRECTION_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         waitForVisibilityOfElement("SELL_IT_BUTTON", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
@@ -168,6 +195,10 @@ public class UrlRedirectionPage extends BasePage{
         this.clickButton("BACK_BUTTON", LocatorClassName.URL_REDIRECTION_LOCATOR_CLASS.toString(), LocatorType.XPATH);
     }
     public void visit(){
+        if(displayStatus("UPDATE_POPUP", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,5)){
+            waitForVisibilityOfElement("UPDATE_POPUP_LATER_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
+            this.clickButton("UPDATE_POPUP_LATER_BUTTON", LocatorClassName.LOGIN_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        }
         waitForVisibilityOfElement("LOGIN_POPUP", LocatorClassName.LOGOUT_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
         this.clickButton("SKIP_BUTTON", LocatorClassName.URL_REDIRECTION_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         waitForVisibilityOfElement("SELL_IT_BUTTON", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
@@ -188,8 +219,8 @@ public class UrlRedirectionPage extends BasePage{
         waitForVisibilityOfElement("UPLOAD_BUTTON", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
         this.clickButton("UPLOAD_BUTTON", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         this.sleep(4000);
-        waitForVisibilityOfElement("SELECT_IMAGE", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
-        this.clickButton("SELECT_IMAGE",LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        waitForVisibilityOfElement("SELECT_IMAGE2", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
+        this.clickButton("SELECT_IMAGE2",LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         this.sleep(30000);
         waitForVisibilityOfElement("PROHIBITED_BOTTOM_SHEET", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
         this.clickButton("PROHIBITED_BOTTOM_SHEET_TEXT_LINK",LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
@@ -207,8 +238,8 @@ public class UrlRedirectionPage extends BasePage{
         waitForVisibilityOfElement("UPLOAD_BUTTON", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
         this.clickButton("UPLOAD_BUTTON", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         this.sleep(5000);
-        waitForVisibilityOfElement("SELECT_IMAGE", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
-        this.clickButton("SELECT_IMAGE",LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
+        waitForVisibilityOfElement("SELECT_IMAGE2", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
+        this.clickButton("SELECT_IMAGE2",LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);
         this.sleep(20000);
         waitForVisibilityOfElement("WARNING_BOTTOM_SHEET_TEXT_LINK", LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH,60);
         this.clickButton("WARNING_BOTTOM_SHEET_TEXT_LINK",LocatorClassName.PRODUCT_UPLOAD_LOCATOR_CLASS.toString(), LocatorType.XPATH);

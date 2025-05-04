@@ -37,3 +37,4 @@ appium_server_logs.txt
 failureScreenshots/
 test-recordings/
 allure-results/
+allure-report/

@@ -23,8 +23,7 @@
             </run>
         </groups>
         <classes>
-<!--            <class name="tests.LoginPageTest"/>-->
-<!--            <class name="tests.LogoutTest"/>-->
+<!--            <class name="tests.#write the class name"/>-->
         </classes>
     </test>
 
@@ -38,9 +37,11 @@
         </groups>
         <classes>
             <class name="tests.UrlRedirectionTest"/>
-<!--            <class name="tests.ProductUploadTest"/>-->
+            <class name="tests.ProductUploadTest"/>
             <class name="tests.LogoutTest"/>
             <class name="tests.LoginPageTest"/>
+            <class name="tests.LanguageChangeTest"/>
+            <class name="tests.VerifyLoginPopupOnActionByLoggedOutUserTest"/>
         </classes>
     </test>
 

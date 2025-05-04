@@ -33,4 +33,5 @@ public class UrlRedirectionPageLocatorsAndroid {
     public static final String WHATSAPP_LINK_PAGEVIEW = "//android.view.View[@text=\"Chat on WhatsApp with +62 811-9001-3750\"]";
     public static final String WHATSAPP_LINK_TOPBAR = "//android.widget.TextView[@resource-id=\"com.android.chrome:id/url_bar\"]";
     public static final String CHROME = "//android.widget.Button[@resource-id=\"com.android.chrome:id/signin_fre_dismiss_button\"]";
+    public static final String CHROME_USE_ANOTHER_ACCOUNT_BUTTON = "//android.widget.Button[@resource-id=\"com.android.chrome:id/signin_fre_dismiss_button\"]";
 }
